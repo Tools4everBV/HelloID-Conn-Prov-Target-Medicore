@@ -1,0 +1,95 @@
+[
+  {
+      "key": "UserName",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "label": "UserName",
+          "description": "The UserName to connect to the API",
+          "required": true
+      }
+  },
+  {
+      "key": "Password",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "type": "password",
+          "label": "Password",
+          "description": "The password to connect to the API",
+          "required": true
+      }
+  },
+  {
+      "key": "client_id",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "label": "client_id",
+          "description": "The client_id to connect to the API",
+          "required": true
+      }
+  },
+  {
+      "key": "client_secret",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "type": "password",
+          "label": "client_secret",
+          "description": "The client_secret to connect to the API",
+          "required": true
+      }
+  },
+  {
+      "key": "OcpApimSubscriptionKey",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "type": "password",
+          "label": "Ocp-Apim-Subscription-Key",
+          "description": "The Ocp-Apim-Subscription-Key to connect to the API",
+          "required": true
+      }
+  },
+  {
+      "key": "BaseUrl",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "label": "BaseUrl",
+          "description": "The URL to the API.",
+          "required": true
+      }
+  },
+  {
+      "key": "TokenUrl",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "label": "TokenUrl",
+          "description": "The TokenUrl of the API.",
+          "required": true
+      }
+  },
+  {
+      "key": "TemplateMappingPath",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "label": "TemplateMappingPath",
+          "description": "The TemplateMappingPath of the API.",
+          "required": true
+      }
+  },
+  {
+      "key": "LocationMappingPath",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+          "label": "LocationMappingPath",
+          "description": "The LocationMappingPath of the API.",
+          "required": true
+      }
+  }
+]
