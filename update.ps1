@@ -207,7 +207,7 @@ try {
             throw $errorObj.FriendlyMessage
         }
     }
-    
+
     $correlatedAccount = $employee.data
     $outputContext.PreviousData = $correlatedAccount
 
@@ -215,11 +215,11 @@ try {
     if ($null -ne $correlatedAccount) {
         #Preview : Note! there are no contracts in scope (InConditions) in the HelloID preview mode.
         [array]$desiredContracts = $personContext.person.contracts | Where-Object { $_.Context.InConditions -eq $true }
-        if ($dryRun -eq $true) {
-            [array]$desiredContracts = $p.contracts
+        if ($actionContext.DryRun -eq $true) {
+            [array]$desiredContracts = $personContext.Person.Contracts
         }
         if ($desiredContracts.length -lt 1) {
-            throw "[$($p.DisplayName)] No Contracts in scope [InConditions] found!"
+            throw "[$($personContext.Person.DisplayName)] No Contracts in scope [InConditions] found!"
         }
 
         $auditLogsValidation = [System.Collections.Generic.List[PSCustomObject]]::new()
@@ -248,7 +248,7 @@ try {
         try {
             $desiredLocations = Get-MedicoreLocationIdsFromMapping @splatGetMedicoreLocationIds
             $desiredLocationUniqueIds = [array]($desiredLocations.LocationId | Select-Object -Unique).Where({ -not [string]::IsNullOrEmpty($_) })
-            $actionContext.Data.locations = $desiredLocationUniqueIds
+            $actionContext.Data | Add-Member -MemberType NoteProperty -Name 'locations' -Value $desiredLocationUniqueIds
         } catch {
             $auditLogsValidation.Add([PSCustomObject]@{
                     Message = "Locations Mapping: [$($_.Exception.Message)]"

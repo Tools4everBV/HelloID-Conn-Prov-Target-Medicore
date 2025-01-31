@@ -259,7 +259,7 @@ try {
             'CreateAccount' {
                 Write-Information 'Creating and correlating Medicore account'
 
-                $actionContext.Data.locations = $desiredLocationUniqueIds
+                $actionContext.Data | Add-Member -MemberType NoteProperty -Name 'locations' -Value $desiredLocationUniqueIds
                 if ($actionContext.Data.locations.Count -eq 0 ) {
                     $actionContext.Data.locations = @($null)
                 }
@@ -297,7 +297,7 @@ try {
 
                 $outputContext.Data = $employee.data
                 $outputContext.AccountReference = $employee.data.hrNumber
-                $auditLogMessage = "Create account was successful. AccountReference is: [$($outputContext.AccountReference)"
+                $auditLogMessage = "Create account was successful. AccountReference is: [$($outputContext.AccountReference)]"
                 break
             }
 
