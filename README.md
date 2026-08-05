@@ -64,10 +64,24 @@ https://raw.githubusercontent.com/Tools4everBV/HelloID-Conn-Prov-Target-Medicore
 
 ### Requirements
 
-- Valid Medicore API credentials (username, password, client_id, client_secret)
-- Medicore API subscription key (Ocp-Apim-Subscription-Key)
-- API base URL and token URL
+Before implementing this connector, ensure the following requirements are met:
+
+**API Access from Medicore:**
+The client must request API access from Medicore. Medicore will provide the following credentials and endpoints:
+- **UserName** - OAuth2 username for password grant authentication
+- **Password** - Password for the API user
+- **client_id** - OAuth2 client ID for API authentication  
+- **client_secret** - OAuth2 client secret for API authentication
+- **Ocp-Apim-Subscription-Key** - Medicore API subscription key (required header)
+- **BaseUrl** - Base URL for Medicore API v1 endpoints (must end with `/hrintegration/v1`)
+- **TokenUrl** - OAuth2 token endpoint URL for obtaining access tokens
+
+**Source System Requirements:**
+- The `agbCode` field must be available from the source system (e.g., HR system). This field is **required** for account management in Medicore. If not available from the source, a default value (e.g., '94000000') must be configured in the field mapping.
+
+**Technical Requirements:**
 - OAuth2 password grant flow support
+- API version 1 endpoints (v2 endpoints are not functional)
 
 ### Connection settings
 
@@ -126,6 +140,9 @@ These conversions are required by the Medicore API to accept the data correctly.
 
 > [!NOTE]
 > The `abbreviation` field is typically populated with the employee's personnel number (hrNumber) rather than a name abbreviation, as this provides a more unique and stable identifier.
+
+> [!IMPORTANT]
+> The `agbCode` field is **required** for account management in Medicore. Without an agbCode, accounts cannot be managed. This field must be available from the source system.
 
 ### Name field logic
 
