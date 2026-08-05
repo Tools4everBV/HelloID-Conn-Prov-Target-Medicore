@@ -155,7 +155,7 @@
     },
     {
       "Name": "templateId",
-      "Description": "[Required] ID of the template on which to create the user with\nNote: does not seem possible to update (waiting for confirmation from Medicore on this)",
+      "Description": "[Required] ID of the template on which to create the user with",
       "Type": "Text",
       "MappingActions": [
         {
