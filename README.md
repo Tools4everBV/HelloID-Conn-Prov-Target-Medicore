@@ -4,68 +4,66 @@
 > This repository contains the connector and configuration code only. The implementer is responsible to acquire the connection details such as username, password, certificate, etc. You might even need to sign a contract or agreement with the supplier before implementing this connector. Please contact the client's application manager to coordinate the connector requirements.
 
 <p align="center">
-  <img src="">
+  <img src="https://github.com/Tools4everBV/HelloID-Conn-Prov-Target-Medicore/blob/main/Logo.png?raw=true">
 </p>
 
 ## Table of contents
 
-- [HelloID-Conn-Prov-Target-Medicore](#helloid-conn-prov-target-Medicore)
+- [HelloID-Conn-Prov-Target-Medicore](#helloid-conn-prov-target-medicore)
   - [Table of contents](#table-of-contents)
   - [Introduction](#introduction)
+  - [Supported features](#supported-features)
   - [Getting started](#getting-started)
-    - [Provisioning PowerShell V2 connector](#provisioning-powershell-connector)
-      - [Correlation configuration](#correlation-configuration)
-      - [Field mapping](#field-mapping)
+    - [HelloID Icon URL](#helloid-icon-url)
+    - [Requirements](#requirements)
     - [Connection settings](#connection-settings)
-    - [Prerequisites](#prerequisites)
-    - [Remarks](#remarks)
-  - [Setup the connector](#setup-the-connector)
+    - [Correlation configuration](#correlation-configuration)
+    - [Field mapping](#field-mapping)
+    - [Account reference](#account-reference)
+  - [Remarks](#remarks)
+    - [Type conversions](#type-conversions)
+    - [Delete behavior](#delete-behavior)
+    - [Location permissions](#location-permissions)
+    - [Import limitations](#import-limitations)
+    - [Governance reconciliation resolutions](#governance-reconciliation-resolutions)
+  - [Development resources](#development-resources)
+    - [API endpoints](#api-endpoints)
   - [Getting help](#getting-help)
   - [HelloID docs](#helloid-docs)
 
 ## Introduction
 
-_HelloID-Conn-Prov-Target-Medicore_ is a _target_ connector. _Medicore_ provides a set of REST API's that allow you to programmatically interact with its data.
-This connector manages users in Medicore, including templates and locations.
+HelloID-Conn-Prov-Target-Medicore is a target connector. Medicore provides a set of REST APIs that allow you to programmatically interact with its data. This connector manages user accounts in Medicore and their location assignments.
 
-The following lifecycle actions are available:
+## Supported features
 
-| Action                     | Description                                                                             |
-| -------------------------- | --------------------------------------------------------------------------------------- |
-| create.ps1                 | Default PowerShell _create_ lifecycle action, including location and template mapping   |
-| disable.ps1                | Default PowerShell _disable_ lifecycle action                                           |
-| enable.ps1                 | Default PowerShell _enable_ lifecycle action                                            |
-| update.ps1                 | Default PowerShell _update_ lifecycle action, including updating locations and template |
-| configuration.json         | Default _configuration.json_                                                            |
-| fieldMapping.json          | Default _fieldMapping.json_                                                             |
-| Assets/LocationMapping.csv | Default example _LocationMapping.json_                                                  |
-| Assets/TemplateMapping.csv | Default example _TemplateMapping.json_                                                  |
+The following features are available:
+
+| Feature                               | Supported | Notes                                                                                                                                         |
+| ------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Account Lifecycle                     | ✅         | Create, Update, Enable, Disable. Delete is a soft-delete (updates fields instead of removing account). [Read more](#type-conversions)         |
+| Permissions                           | ✅         | Locations managed via clinics endpoint. [Read more](#location-permissions)                                                                    |
+| Resources                             | ❌         | Not applicable                                                                                                                                |
+| Entitlement Import: Accounts          | ✅         | Limited fields available. No enabled status (hardcoded to false). Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations) |
+| Entitlement Import: Permissions       | ✅         | Requires individual calls per employee. Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations)                           |
+| Governance Reconciliation Resolutions | ✅         | Delete and Disable actions supported. [Read more](#governance-reconciliation-resolutions)                                                     |
 
 ## Getting started
 
-### Provisioning PowerShell V2 connector
+### HelloID Icon URL
 
-#### Correlation configuration
+URL of the icon used for the HelloID Provisioning target system.
 
-The correlation configuration is used to specify which properties will be used to match an existing account within _Medicore_ to a person in _HelloID_.
+```
+https://raw.githubusercontent.com/Tools4everBV/HelloID-Conn-Prov-Target-Medicore/refs/heads/main/Icon.png
+```
 
-To properly setup the correlation:
+### Requirements
 
-1. Open the `Correlation` tab.
-
-2. Specify the following configuration:
-
-   | Setting                   | Value                             |
-   | ------------------------- | --------------------------------- |
-   | Enable correlation        | `True`                            |
-   | Person correlation field  | `PersonContext.Person.ExternalId` |
-   | Account correlation field | `hrNumber`                        |
-
-> [!TIP] > _For more information on correlation, please refer to our correlation [documentation](https://docs.helloid.com/en/provisioning/target-systems/powershell-target-systems/correlation.html) pages_.
-
-#### Field mapping
-
-The field mapping can be imported by using the _fieldMapping.json_ file.
+- Valid Medicore API credentials (username, password, client_id, client_secret)
+- Medicore API subscription key (Ocp-Apim-Subscription-Key)
+- API base URL and token URL
+- OAuth2 password grant flow support
 
 ### Connection settings
 
@@ -81,43 +79,117 @@ The following settings are required to connect to the API.
 | BaseUrl                | The URL to the API                         | Yes       |
 | TokenUrl               | The URL to generate the bearer token       | Yes       |
 
-### Prerequisites
+### Correlation configuration
 
-### Remarks
+The correlation configuration is used to specify which properties will be used to match an existing account within Medicore to a person in HelloID.
 
-> Due to the limitations of the field mapping, which can only return strings or an array of strings, it is necessary to perform type conversions for the properties: 'gender', 'isAttendingPhysician' and 'isPatientBound' to correctly send them to the API.
+| Setting                   | Value                           |
+| ------------------------- | ------------------------------- |
+| Enable correlation        | True                            |
+| Person correlation field  | PersonContext.Person.ExternalId |
+| Account correlation field | hrNumber                        |
 
-> The comparison process during updates has a different approach for the 'locations' property because it is an array.
+> [!TIP]
+> For more information on correlation, please refer to our correlation [documentation](https://docs.helloid.com/en/provisioning/target-systems/powershell-v2-target-systems/correlation.html) pages.
 
+### Field mapping
 
-### Remarks CSV Mapping
+The field mapping can be imported by using the `fieldMapping.json` file.
 
-> To prevent having a large number of business rules, the connector comes with two csv mapping files. One for the template (templatemapping.csv) and one for locations (locationMapping.csv), these can be found in the Assets folder. Each person can be linked to one template but multiple locations, allowing for flexible and efficient management of user access.
+### Account reference
 
-In the mapping files, you will find the properties HelloIdDepartment and HelloIdTitle. The values of these properties should match the values in your HelloID contract. The last two properties, LocationName and LocationId (or the corresponding properties for the template), refer to the MediCore location or template needed for that specific department or title.
+The account reference is populated with the `hrNumber` property from Medicore.
 
-> The connector is designed with the assumption that the fields 'abbreviations' and 'username' are populated with the User Principal Name (UPN) from Active Directory (AD). This ensures uniqueness for each entry, eliminating the need for an additional uniqueness script. If you want to populate these properties with different values, remember to also create a uniqueness script.
+## Remarks
 
-> In the create and update scripts, you will find the following two lines of code:
+### Type conversions
 
-```
-$locationLookupField1 = { $_.Department.ExternalId } # Mandatory
-$locationLookupField2 = { $_.Title.ExternalId }      # Not mandatory
-```
+Due to the limitations of the field mapping, which can only return strings or an array of strings, type conversions are performed in the lifecycle scripts for the following properties:
 
-These lines are used to select the properties on which we loop through for every single contract that falls within the scope of the business rules. This process results in a list of departments and titles, which need to exist in the `LocationMapping.csv` file to obtain the corresponding MediCore location ID.
+- `gender` - converted to integer
+- `isAttendingPhysician` - converted to boolean
+- `isPatientBound` - converted to boolean
 
+These conversions are required by the Medicore API to accept the data correctly.
 
+### Delete behavior
 
-## Setup the connector
+The delete action does **not** perform a hard delete. Instead, it performs a soft-delete by updating specific account fields:
 
-> _How to setup the connector in HelloID._ Are special settings required. Like the _primary manager_ settings for a source connector.
+- `firstName` - prefixed with `_zz` to mark archived employees (e.g., `_zzJohn`)
+- `email` - set to empty string to free up unique values for reuse
+- `username` - set to empty string to free up unique values for reuse
+
+This approach allows archived employees to be recognized in the system while releasing their unique identifiers (email and username) for potential reassignment to new employees.
+
+> [!IMPORTANT]
+> Archived accounts (with `_zz` prefix in firstName) are automatically filtered out during both account and permission imports. This ensures deleted employees are not imported back into HelloID.
+
+> [!WARNING]
+> Because delete is implemented as an update operation, the account remains in Medicore but with modified field values. This is not a true deletion.
+
+### Location permissions
+
+- Location permissions use the `/clinics` endpoint (clinics and locations are the same in Medicore)
+- Each person can be assigned to multiple locations
+
+### Import limitations
+
+The import action has significant limitations:
+
+**Account Import:**
+- Only the fields `id`, `name`, `hrNumber`, and `isInternalAccount` are returned by the GET all employees endpoint
+- No enabled/disabled status is available in the import data - the `Enabled` property is hardcoded to `false` for all imported accounts
+- If more fields are needed, individual GET calls for each employee would be required
+- This approach is not recommended as it significantly increases runtime, especially with large numbers of accounts
+- Preferably, the Medicore API should be updated to include required fields in the bulk endpoint
+- Archived accounts (names ending with `_zz`) are automatically excluded from import
+
+**Permissions Import:**
+- All employees must be retrieved first, then individual GET calls are made for each employee to retrieve their location assignments
+- This is required because there is no endpoint to retrieve assigned locations per location
+- This may impact performance with large numbers of accounts
+- Archived accounts (names ending with `_zz`) are automatically excluded from import
+
+> [!NOTE]
+> We do not advise fetching individual employee details due to performance concerns. Consider requesting API enhancements from Medicore for optimal import performance.
+
+### Governance reconciliation resolutions
+
+The connector supports Governance Reconciliation Resolutions for **Delete** and **Disable** actions. These actions can be triggered from governance workflows where no person context is available.
+
+**Enforcement vs Reconciliation Mode:**
+
+- **Enforcement mode**: Triggered by normal workflows. Uses field mapping with full person context available.
+- **Reconciliation mode**: Triggered by governance resolutions. Uses hardcoded values because no person context is available.
+
+**Hardcoded values for reconciliation:**
+
+| Action  | Field(s) Updated                 | Values                                            |
+| ------- | -------------------------------- | ------------------------------------------------- |
+| Delete  | `firstName`, `email`, `username` | Prefix firstName with `_zz`, clear email/username |
+| Disable | `dateOutOfService`               | Set to current date (YYYY-MM-DD)                  |
+
+> [!IMPORTANT]
+> Reconciliation mode applies hardcoded field values to ensure accounts can be managed through governance workflows without requiring person context. These values differ from enforcement mode which uses the full field mapping.
+
+## Development resources
+
+### API endpoints
+
+The following endpoints are used by the connector:
+
+| Endpoint        | Method     | Description                          |
+| --------------- | ---------- | ------------------------------------ |
+| /oauth2/token   | POST       | Retrieve access token                |
+| /employees      | GET, POST  | Retrieve and create employee records |
+| /employees/{id} | GET, PATCH | Get and update specific employee     |
+| /clinics        | GET        | Retrieve location/clinic information |
 
 ## Getting help
 
-> [!TIP] > _For more information on how to configure a HelloID PowerShell connector, please refer to our [documentation](https://docs.helloid.com/en/provisioning/target-systems/powershell-target-systems.html) pages_.
-
-> [!TIP] > _If you need help, feel free to ask questions on our [forum](https://forum.helloid.com)_.
+> [!TIP]
+> For more information on how to configure a HelloID PowerShell connector, please refer to our [documentation](https://docs.helloid.com/en/provisioning/target-systems/powershell-v2-target-systems.html) pages.
 
 ## HelloID docs
 
