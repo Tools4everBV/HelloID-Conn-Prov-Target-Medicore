@@ -22,9 +22,12 @@
     - [Account reference](#account-reference)
   - [Remarks](#remarks)
     - [Type conversions](#type-conversions)
+    - [Update comparison logic](#update-comparison-logic)
     - [Delete behavior](#delete-behavior)
     - [Location permissions](#location-permissions)
     - [Import limitations](#import-limitations)
+    - [API version](#api-version)
+    - [Field update limitations](#field-update-limitations)
     - [Governance reconciliation resolutions](#governance-reconciliation-resolutions)
   - [Development resources](#development-resources)
     - [API endpoints](#api-endpoints)
@@ -122,6 +125,16 @@ These conversions are required by the Medicore API to accept the data correctly.
 
 > [!NOTE]
 > The `abbreviation` field is typically populated with the employee's personnel number (hrNumber) rather than a name abbreviation, as this provides a more unique and stable identifier.
+
+### Update comparison logic
+
+The update, enable, disable, and delete scripts use a normalized comparison approach to detect actual changes:
+
+- **Null and empty string equivalence**: Both `null` and `""` (empty string) are treated as equivalent to prevent false change detections
+- **Type normalization**: All values are converted to strings before comparison to handle type differences (e.g., `1` vs `"1"`)
+- **Comparison method**: Uses PowerShell's `Compare-Object` on normalized properties to detect differences
+
+This approach ensures that only genuine content changes trigger updates, preventing unnecessary API calls when field mapping returns empty strings for null values or when type representations differ.
 
 ### Delete behavior
 
