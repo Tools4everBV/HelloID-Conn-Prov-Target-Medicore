@@ -76,8 +76,12 @@ The client must request API access from Medicore. Medicore will provide the foll
 - **BaseUrl** - Base URL for Medicore API v1 endpoints (must end with `/hrintegration/v1`)
 - **TokenUrl** - OAuth2 token endpoint URL for obtaining access tokens
 
+**Medicore System Requirements:**
+- All Medicore accounts must have a populated `hrNumber` field. This field is **required** and is the only supported correlation field. **The connector cannot be implemented without this field.** If hrNumber is not (correctly) populated in Medicore, it must be (correctly) populated before implementation can proceed.
+
 **Source System Requirements:**
-- The `agbCode` field must be available from the source system (e.g., HR system). This field is **required** for account management in Medicore.
+- The `agbCode` field must be available from the source system (e.g., HR system). This field is **required** for account management in Medicore. **The connector cannot be implemented without this field.** If agbCode is not available from the source system, it must be made available before implementation can proceed.
+- The `templateId` must be determined for each account. This is a **required** field when creating accounts in Medicore. Organizations with a single template can use a fixed value in the field mapping. Organizations with multiple templates must establish logic to determine which persons receive which template ID.
 
 **Technical Requirements:**
 - OAuth2 password grant flow support
@@ -113,6 +117,9 @@ The correlation configuration is used to specify which properties will be used t
 | Enable correlation        | True                            |
 | Person correlation field  | PersonContext.Person.ExternalId |
 | Account correlation field | hrNumber                        |
+
+> [!IMPORTANT]
+> Correlation **must** use the `hrNumber` field. This is the only supported correlation field because the Medicore API is built around hrNumber - all GET operations for individual employees use `/employees/{hrnumber}`. Correlation on any other field is not supported by the API.
 
 > [!TIP]
 > For more information on correlation, please refer to our correlation [documentation](https://docs.helloid.com/en/provisioning/target-systems/powershell-v2-target-systems/correlation.html) pages.
