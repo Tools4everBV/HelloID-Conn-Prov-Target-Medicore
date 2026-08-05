@@ -349,7 +349,7 @@
             "Update"
           ],
           "MappingMode": "Field",
-          "Value": "\"Person.Name.GivenName\"",
+          "Value": "\"Person.Name.NickName\"",
           "UsedInNotifications": false,
           "StoreInAccountData": true
         },
