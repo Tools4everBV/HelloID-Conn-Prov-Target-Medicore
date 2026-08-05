@@ -3,6 +3,10 @@
 # PowerShell V2
 ######################################################
 
+# Convert templateId to int, as this is required by the API
+if ($actionContext.Data.PSObject.Properties['templateId']) {
+    $actionContext.Data.templateId = [int]$actionContext.Data.templateId
+}
 # Convert gender to int, as this is required by the API
 if ($actionContext.Data.PSObject.Properties['gender']) {
     $actionContext.Data.gender = [int]$actionContext.Data.gender
