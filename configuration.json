@@ -3,8 +3,9 @@
         "defaultValue": "",
         "key": "UserName",
         "templateOptions": {
-            "description": "The UserName to connect to the API",
+            "description": "The username for OAuth2 password grant authentication. Provided by Medicore.",
             "label": "UserName",
+            "placeholder": "hello_id_integration",
             "required": true
         },
         "type": "input"
@@ -13,8 +14,9 @@
         "defaultValue": "",
         "key": "Password",
         "templateOptions": {
-            "description": "The password to connect to the API",
+            "description": "The password for the API username. Provided by Medicore. Store securely in HelloID.",
             "label": "Password",
+            "placeholder": "Enter password (will be masked)",
             "required": true,
             "type": "password"
         },
@@ -24,8 +26,9 @@
         "defaultValue": "",
         "key": "client_id",
         "templateOptions": {
-            "description": "The client_id to connect to the API",
-            "label": "client_id",
+            "description": "The OAuth2 client ID for API authentication. Provided by Medicore.",
+            "label": "Client ID",
+            "placeholder": "api_hello_id",
             "required": true
         },
         "type": "input"
@@ -34,8 +37,9 @@
         "defaultValue": "",
         "key": "client_secret",
         "templateOptions": {
-            "description": "The client_secret to connect to the API",
-            "label": "client_secret",
+            "description": "The OAuth2 client secret for API authentication. Provided by Medicore. Store securely in HelloID.",
+            "label": "Client Secret",
+            "placeholder": "Enter client secret (will be masked)",
             "required": true,
             "type": "password"
         },
@@ -45,8 +49,9 @@
         "defaultValue": "",
         "key": "OcpApimSubscriptionKey",
         "templateOptions": {
-            "description": "The Ocp-Apim-Subscription-Key to connect to the API",
+            "description": "The Medicore API subscription key (Ocp-Apim-Subscription-Key header). Provided by Medicore. Store securely in HelloID.",
             "label": "Ocp-Apim-Subscription-Key",
+            "placeholder": "Enter subscription key (will be masked)",
             "required": true,
             "type": "password"
         },
@@ -56,8 +61,9 @@
         "defaultValue": "",
         "key": "BaseUrl",
         "templateOptions": {
-            "description": "The URL to the API.",
+            "description": "The base URL for Medicore API v1 endpoints. Use /hrintegration/v1 path. Provided by Medicore.",
             "label": "BaseUrl",
+            "placeholder": "https://{api-gateway}.azure-api.net/hrintegration/v1",
             "required": true
         },
         "type": "input"
@@ -66,8 +72,9 @@
         "defaultValue": "",
         "key": "TokenUrl",
         "templateOptions": {
-            "description": "The TokenUrl of the API.",
+            "description": "The OAuth2 token endpoint URL for obtaining access tokens. Provided by Medicore. Format: https://{identity-server}/auth/realms/{realm}/protocol/openid-connect/token",
             "label": "TokenUrl",
+            "placeholder": "https://{identity-server}/auth/realms/{realm}/protocol/openid-connect/token",
             "required": true
         },
         "type": "input"
