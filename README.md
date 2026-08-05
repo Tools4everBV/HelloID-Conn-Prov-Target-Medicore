@@ -44,9 +44,9 @@ The following features are available:
 | Account Lifecycle                     | ✅         | Create, Update, Enable, Disable. Delete is a soft-delete (updates fields instead of removing account). [Read more](#type-conversions)         |
 | Permissions                           | ✅         | Locations managed via clinics endpoint. [Read more](#location-permissions)                                                                    |
 | Resources                             | ❌         | Not applicable                                                                                                                                |
-| Entitlement Import: Accounts          | ✅         | Limited fields available. No enabled status (hardcoded to false). Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations) |
-| Entitlement Import: Permissions       | ✅         | Requires individual calls per employee. Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations)                           |
-| Governance Reconciliation Resolutions | ✅         | Delete and Disable actions supported. [Read more](#governance-reconciliation-resolutions)                                                     |
+| Entitlement Import: Accounts          | ✅⚠️        | Limited fields available. No enabled status (hardcoded to false). Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations) |
+| Entitlement Import: Permissions       | ✅⚠️        | Requires individual calls per employee. Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations)                           |
+| Governance Reconciliation Resolutions | ✅⚠️        | Delete and Disable actions supported. [Read more](#governance-reconciliation-resolutions)                                                     |
 
 ## Getting started
 
@@ -69,15 +69,22 @@ https://raw.githubusercontent.com/Tools4everBV/HelloID-Conn-Prov-Target-Medicore
 
 The following settings are required to connect to the API.
 
-| Setting                | Description                                | Mandatory |
-| ---------------------- | ------------------------------------------ | --------- |
-| UserName               | The UserName to connect to the API         | Yes       |
-| Password               | The Password to connect to the API         | Yes       |
-| client_id              | The client ID to connect to the API        | Yes       |
-| client_secret          | The client secret to connect to the API    | Yes       |
-| OcpApimSubscriptionKey | The subscription key to connect to the API | Yes       |
-| BaseUrl                | The URL to the API                         | Yes       |
-| TokenUrl               | The URL to generate the bearer token       | Yes       |
+| Setting                | Description                                                                                      | Mandatory | Example                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------ | --------- | -------------------------------------------------------------------------------------------- |
+| UserName               | The username for OAuth2 password grant authentication. Provided by Medicore.                     | Yes       | `hello_id_integration`                                                                       |
+| Password               | The password for the API username. Provided by Medicore.                                         | Yes       | `(secret)`                                                                                   |
+| client_id              | The OAuth2 client ID for API authentication. Provided by Medicore.                               | Yes       | `api_hello_id`                                                                               |
+| client_secret          | The OAuth2 client secret for API authentication. Provided by Medicore.                           | Yes       | `(secret)`                                                                                   |
+| OcpApimSubscriptionKey | The Medicore API subscription key (Ocp-Apim-Subscription-Key header). Provided by Medicore.         | Yes    | `(secret)`                                                                                   |
+| BaseUrl                | The base URL for Medicore API v1 endpoints. Must use `/hrintegration/v1` path.                  | Yes       | `https://{api-gateway}.azure-api.net/hrintegration/v1`                                       |
+| TokenUrl               | The OAuth2 token endpoint URL for obtaining access tokens. Provided by Medicore.                 | Yes       | `https://{identity-server}/auth/realms/{realm}/protocol/openid-connect/token`               |
+
+> [!TIP]
+> The Medicore API uses OAuth2 **password grant flow**, requiring both username/password credentials AND client_id/client_secret.
+
+**URL Format:**
+- **BaseUrl:** Always ends with `/hrintegration/v1` (API version 1). The hostname will be provided by Medicore.
+- **TokenUrl:** Format is `https://{identity-server}/auth/realms/{realm}/protocol/openid-connect/token` where `{realm}` is your environment-specific realm name provided by Medicore
 
 ### Correlation configuration
 
@@ -106,11 +113,15 @@ The account reference is populated with the `hrNumber` property from Medicore.
 
 Due to the limitations of the field mapping, which can only return strings or an array of strings, type conversions are performed in the lifecycle scripts for the following properties:
 
-- `gender` - converted to integer
+- `gender` - converted to integer (1 = Male, 2 = Female)
+- `templateId` - converted to integer
 - `isAttendingPhysician` - converted to boolean
 - `isPatientBound` - converted to boolean
 
 These conversions are required by the Medicore API to accept the data correctly.
+
+> [!NOTE]
+> The `abbreviation` field is typically populated with the employee's personnel number (hrNumber) rather than a name abbreviation, as this provides a more unique and stable identifier.
 
 ### Delete behavior
 
@@ -139,6 +150,7 @@ The import action has significant limitations:
 
 **Account Import:**
 - Only the fields `id`, `name`, `hrNumber`, and `isInternalAccount` are returned by the GET all employees endpoint
+- The `username` field is **not included** in the bulk endpoint response - individual GET calls would be required
 - No enabled/disabled status is available in the import data - the `Enabled` property is hardcoded to `false` for all imported accounts
 - If more fields are needed, individual GET calls for each employee would be required
 - This approach is not recommended as it significantly increases runtime, especially with large numbers of accounts
@@ -148,11 +160,24 @@ The import action has significant limitations:
 **Permissions Import:**
 - All employees must be retrieved first, then individual GET calls are made for each employee to retrieve their location assignments
 - This is required because there is no endpoint to retrieve assigned locations per location
-- This may impact performance with large numbers of accounts
-- Archived accounts (names ending with `_zz`) are automatically excluded from import
 
-> [!NOTE]
-> We do not advise fetching individual employee details due to performance concerns. Consider requesting API enhancements from Medicore for optimal import performance.
+### API version
+
+This connector uses Medicore API **v1** endpoints:
+- `/hrintegration/v1/employees` - Used for account management
+- `/hrintegration/v1/employees/{id}/clinics` - Used for location permissions
+
+> [!WARNING]
+> Medicore API v2 endpoints return 404 errors and are not functional. Ensure all integrations use v1 endpoints.
+
+### Field update limitations
+
+**Known API issues:**
+- `username` - PUT requests to update this field do not return errors but the value is not actually updated in Medicore
+- This appears to be a Medicore API limitation
+
+**UI restrictions:**
+- `hrNumber` (HRM reference) is not manually editable in the Medicore UI, only via API
 
 ### Governance reconciliation resolutions
 
