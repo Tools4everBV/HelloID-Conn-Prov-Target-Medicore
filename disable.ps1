@@ -1,23 +1,26 @@
 ########################################################################
-# HelloID-Conn-Prov-Target-Medicore-Enable
+# HelloID-Conn-Prov-Target-Medicore-Disable
 # PowerShell V2
 ######################################################
 
-# Convert templateId to int, as this is required by the API
-if ($actionContext.Data.PSObject.Properties['templateId']) {
-    $actionContext.Data.templateId = [int]$actionContext.Data.templateId
-}
-# Convert gender to int, as this is required by the API
-if ($actionContext.Data.PSObject.Properties['gender']) {
-    $actionContext.Data.gender = [int]$actionContext.Data.gender
-}
-# Convert isAttendingPhysicianto bool, as this is required by the API
-if ($actionContext.Data.PSObject.Properties['isAttendingPhysician']) {
-    $actionContext.Data.isAttendingPhysician = [bool]$actionContext.Data.isAttendingPhysician
-}
-# Convert isPatientBoundto bool, as this is required by the API
-if ($actionContext.Data.PSObject.Properties['isPatientBound']) {
-    $actionContext.Data.isPatientBound = [bool]$actionContext.Data.isPatientBound
+# Only perform type conversions when not in reconciliation mode (field mapping is used)
+if ($actionContext.ReconciliationOrigin -ne 'reconciliation') {
+    # Convert templateId to int, as this is required by the API
+    if ($actionContext.Data.PSObject.Properties['templateId']) {
+        $actionContext.Data.templateId = [int]$actionContext.Data.templateId
+    }
+    # Convert gender to int, as this is required by the API
+    if ($actionContext.Data.PSObject.Properties['gender']) {
+        $actionContext.Data.gender = [int]$actionContext.Data.gender
+    }
+    # Convert isAttendingPhysicianto bool, as this is required by the API
+    if ($actionContext.Data.PSObject.Properties['isAttendingPhysician']) {
+        $actionContext.Data.isAttendingPhysician = [System.Convert]::ToBoolean($actionContext.Data.isAttendingPhysician)
+    }
+    # Convert isPatientBoundto bool, as this is required by the API
+    if ($actionContext.Data.PSObject.Properties['isPatientBound']) {
+        $actionContext.Data.isPatientBound = [System.Convert]::ToBoolean($actionContext.Data.isPatientBound)
+    }
 }
 
 # Enable TLS1.2
@@ -173,6 +176,18 @@ try {
         ErrorAction = "Stop"
     }
     $correlatedAccount = (Invoke-RestMethod @queryEmployeeSplatParams).data
+
+    # Apply reconciliation logic after retrieving current account
+    if ($actionContext.ReconciliationOrigin -eq 'reconciliation') {
+        # Reconciliation mode: Use hardcoded values for disable action
+        # Set dateOutOfService to current date to disable the account
+        $currentDate = Get-Date -Format "yyyy-MM-dd"
+        $actionContext.Data = [PSCustomObject]@{
+            dateOutOfService = $currentDate
+        }
+        $dataString = ($actionContext.Data.PSObject.Properties | ForEach-Object { "$($_.Name)=$($_.Value)" }) -join ', '
+        Write-Information "Reconciliation mode: disable ($dataString)"
+    }
 
     # Determine action
     $actionMessage = "determining action"
