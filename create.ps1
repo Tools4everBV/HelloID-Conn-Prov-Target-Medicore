@@ -9,11 +9,11 @@ if ($actionContext.Data.PSObject.Properties['gender']) {
 }
 # Convert isAttendingPhysicianto bool, as this is required by the API
 if ($actionContext.Data.PSObject.Properties['isAttendingPhysician']) {
-    $actionContext.Data.isAttendingPhysician = [bool]$actionContext.Data.isAttendingPhysician
+    $actionContext.Data.isAttendingPhysician = [System.Convert]::ToBoolean($actionContext.Data.isAttendingPhysician)
 }
 # Convert isPatientBoundto bool, as this is required by the API
 if ($actionContext.Data.PSObject.Properties['isPatientBound']) {
-    $actionContext.Data.isPatientBound = [bool]$actionContext.Data.isPatientBound
+    $actionContext.Data.isPatientBound = [System.Convert]::ToBoolean($actionContext.Data.isPatientBound)
 }
 
 # Enable TLS1.2
