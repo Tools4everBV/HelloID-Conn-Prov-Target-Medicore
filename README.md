@@ -22,6 +22,7 @@
     - [Account reference](#account-reference)
   - [Remarks](#remarks)
     - [Type conversions](#type-conversions)
+    - [Name field logic](#name-field-logic)
     - [Update comparison logic](#update-comparison-logic)
     - [Delete behavior](#delete-behavior)
     - [Location permissions](#location-permissions)
@@ -125,6 +126,32 @@ These conversions are required by the Medicore API to accept the data correctly.
 
 > [!NOTE]
 > The `abbreviation` field is typically populated with the employee's personnel number (hrNumber) rather than a name abbreviation, as this provides a more unique and stable identifier.
+
+### Name field logic
+
+Medicore uses four separate name fields to support full name display:
+
+- **lastName** + **lastNamePrefix**: The surname displayed in the system
+- **partnerName** + **partnerNamePrefix**: The partner's name displayed before lastName
+
+**Display logic:**  
+The Medicore UI always displays names as: `[partnerName] [lastName]`
+
+When a `partnerName` is provided, it will **always be displayed first**, followed by the `lastName`.
+
+**Name convention mapping:**
+
+| Convention | Meaning           | Desired display    | lastName            | partnerName         | Medicore Display       |
+|-----------|-------------------|--------------------|--------------------|---------------------|------------------------|
+| B         | Birth name        | "Jansen"           | Jansen (birth)     | *(empty)*           | "Jansen"               |
+| P         | Partner name      | "de Vries"         | de Vries (partner) | *(empty)*           | "de Vries"             |
+| BP        | Birth-Partner     | "Jansen-de Vries"  | de Vries (partner) | Jansen (birth)      | "Jansen de Vries"      |
+| PB        | Partner-Birth     | "de Vries-Jansen"  | Jansen (birth)     | de Vries (partner)  | "de Vries Jansen"      |
+
+**Key points:**
+- For conventions **B** and **P**: Leave `partnerName` and `partnerNamePrefix` empty
+- For conventions **BP** and **PB**: Swap the birth and partner names between `lastName` and `partnerName` to achieve the correct display order
+- The prefix (tussenvoegsel) always follows its corresponding surname
 
 ### Update comparison logic
 
