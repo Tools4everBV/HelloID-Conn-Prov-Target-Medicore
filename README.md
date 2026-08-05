@@ -77,7 +77,7 @@ The client must request API access from Medicore. Medicore will provide the foll
 - **TokenUrl** - OAuth2 token endpoint URL for obtaining access tokens
 
 **Source System Requirements:**
-- The `agbCode` field must be available from the source system (e.g., HR system). This field is **required** for account management in Medicore. If not available from the source, a default value (e.g., '94000000') must be configured in the field mapping.
+- The `agbCode` field must be available from the source system (e.g., HR system). This field is **required** for account management in Medicore.
 
 **Technical Requirements:**
 - OAuth2 password grant flow support
