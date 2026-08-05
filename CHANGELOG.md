@@ -23,10 +23,13 @@ All notable changes to this project will be documented in this file. The format 
 - Import actions now exclude archived accounts (firstName ending with `_zz`) from both account and permission imports
 - Updated README documentation with clearer sections and better organization
 - Enhanced type conversion comments for better code readability
+- Improved update comparison logic in update.ps1, enable.ps1, disable.ps1, and delete.ps1 to normalize null and empty string values, preventing false change detections
+- Enhanced configuration.json with descriptive placeholders and improved field descriptions
 
 ### Fixed
 
 - Boolean conversion for `isAttendingPhysician` and `isPatientBound` fields now correctly parses string "true"/"false" values using `[System.Convert]::ToBoolean()` instead of `[bool]` cast (which incorrectly converted all non-empty strings to `$true`)
+- Corrected field update limitations documentation: only `username` field cannot be updated (API limitation), all other fields including `dateOfBirth`, `dateInService`, and `templateId` can be updated
 
 ### Removed
 
