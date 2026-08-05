@@ -223,15 +223,33 @@ try {
         # Select-Object will add null values for properties that don't exist in correlatedAccount
         $desiredData = $actionContext.Data
         $correlatedAccountNormalized = $correlatedAccount | Select-Object $desiredData.PSObject.Properties.Name
-        # Compare all properties specified in field mapping
+        
+        # Normalize both objects to ensure null and empty string are treated as equivalent
+        # and convert values to string for type-safe comparison
+        $desiredDataNormalized = [PSCustomObject]@{}
+        $correlatedAccountNormalized2 = [PSCustomObject]@{}
+        
+        foreach ($property in $desiredData.PSObject.Properties) {
+            $desiredValue = $property.Value
+            $currentValue = $correlatedAccountNormalized.$($property.Name)
+            
+            # Normalize null and empty string to empty string for both objects
+            $normalizedDesiredValue = if ([string]::IsNullOrEmpty($desiredValue)) { "" } else { [string]$desiredValue }
+            $normalizedCurrentValue = if ([string]::IsNullOrEmpty($currentValue)) { "" } else { [string]$currentValue }
+            
+            $desiredDataNormalized | Add-Member -MemberType NoteProperty -Name $property.Name -Value $normalizedDesiredValue
+            $correlatedAccountNormalized2 | Add-Member -MemberType NoteProperty -Name $property.Name -Value $normalizedCurrentValue
+        }
+        
+        # Compare all properties using Compare-Object
         $splatCompareProperties = @{
-            ReferenceObject  = @($correlatedAccountNormalized.PSObject.Properties)
-            DifferenceObject = @(($desiredData).PSObject.Properties)
+            ReferenceObject  = @($correlatedAccountNormalized2.PSObject.Properties)
+            DifferenceObject = @($desiredDataNormalized.PSObject.Properties)
         }
         $propertiesChanged = Compare-Object @splatCompareProperties -PassThru | Where-Object { $_.SideIndicator -eq '=>' }
+        
         if ($propertiesChanged) {
             $action = "UpdateAccount"
-            Write-Verbose "Properties changed: $($propertiesChanged.Name -join ', ')"
         }
         else {
             $action = "NoChanges"
