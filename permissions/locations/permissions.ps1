@@ -133,7 +133,7 @@ try {
     $actionMessage = "outputting locations as permissions to HelloID"
     $importedPermissions = 0
     foreach ($importedlocation in $importedlocations) {
-        $actionMessage = "processing location [$($importedlocation.name) ($($importedlocation.groupGuid))]"
+        $actionMessage = "processing location [$($importedlocation.name) ($($importedlocation.id))]"
 
         # Shorten DisplayName to max. 100 chars
         $displayName = "$($importedlocation.name)"
