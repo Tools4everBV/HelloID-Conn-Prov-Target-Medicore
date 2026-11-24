@@ -2,74 +2,6 @@
   "Version": "v1",
   "MappingFields": [
     {
-      "Name": "email",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.Contact.Business.Email\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "lastNamePrefix",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.Name.FamilyNamePrefix\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "lastName",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.Name.FamilyName\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "firstName",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.Name.GivenName\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
       "Name": "phoneMobile",
       "Description": "",
       "Type": "Text",
@@ -80,58 +12,7 @@
             "Update"
           ],
           "MappingMode": "Field",
-          "Value": "\"Person.Contact.Business.Phone.Fixed\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "hrNumber",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.ExternalId\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "TemplateDepartment",
-      "Description": "Gets used by the mapping file locations.csv",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.PrimaryContract.Department.ExternalId\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "TemplateTitle",
-      "Description": "Gets used by the mapping file locations.csv",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.PrimaryContract.Title.ExternalId\"",
+          "Value": "\"Person.Contact.Business.Phone.Mobile\"",
           "UsedInNotifications": false,
           "StoreInAccountData": false
         }
@@ -155,162 +36,8 @@
       ]
     },
     {
-      "Name": "isAttendingPhysician",
-      "Description": "Not mandatory, but not nullable.",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Fixed",
-          "Value": "\"false\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "isPatientBound",
-      "Description": "Not mandatorry, but not nullable.",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Fixed",
-          "Value": "\"false\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "agbCode",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Fixed",
-          "Value": "\"12345678\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "gender",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Complex",
-          "Value": "\"function getValue() {\\n\\n    const gender = Person.Details.Gender;\\n    switch (gender) {\\n    case 'Man':\\n        return 1;\\n        break;\\n    case 'Vrouw':\\n        return 2;\\n        break;\\n    default:\\n        return 0;\\n        break;\\n    }\\n\\n    return Person.Details.Gender;\\n}\\n\\ngetValue();\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "marriednameprefix",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.Name.FamilyNamePartnerPrefix\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "password",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Complex",
-          "Value": "\"// generatePasswordOption1.js [https://github.com/Tools4everBV/HelloID-Lib-Prov-HelperFunctions/blob/master/Javascript/Target/Password/Scripts/generatePasswordOption1.js]\\r\\n//\\r\\n// Helper function to shuffle an array\\r\\nfunction randomizeCharSequence(passwordObject) {\\r\\n    for (let j, x, i = passwordObject.length; i; j = Math.floor(Math.random() * i), x = passwordObject[--i], passwordObject[i] = passwordObject[j], passwordObject[j] = x);\\r\\n    return passwordObject;\\r\\n}\\r\\n\\r\\nfunction generatePassword() {\\r\\n    // Initialize these variables for the algorithm to meet your password complexity rules\\r\\n    const passwordLength = 8;\\r\\n    const minUpper = 1;\\r\\n    const maxUpper = 3;\\r\\n    const minNumeric = 0;\\r\\n    const maxNumeric = 2;\\r\\n    const minSpecial = 1;\\r\\n    const maxSpecial = 1;\\r\\n\\r\\n    // Character sets\\r\\n    const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';\\r\\n    const lowerChars = 'abcdefghijklmnopqrstuvwxyz';\\r\\n    const numberChars = '0123456789';\\r\\n    const specialChars = '!#$@*?';\\r\\n\\r\\n    // Do not change any code below this line !!!\\r\\n\\r\\n    // Helper function to get a random character from a set\\r\\n    const getRandomValue = (values) => values.charAt(Math.floor(Math.random() * values.length));\\r\\n\\r\\n    // Generate individual character groups\\r\\n    const numberUpper = Math.floor(Math.random() * (maxUpper - minUpper + 1)) + minUpper;\\r\\n    const numberNumeric = Math.floor(Math.random() * (maxNumeric - minNumeric + 1)) + minNumeric;\\r\\n    const numberSpecial = Math.floor(Math.random() * (maxSpecial - minSpecial + 1)) + minSpecial;\\r\\n    const numberLower = passwordLength - (numberUpper + numberNumeric + numberSpecial);\\r\\n\\r\\n    const numericGroup = Array.from({ length: numberNumeric }, () => getRandomValue(numberChars));\\r\\n    const upperGroup = Array.from({ length: numberUpper }, () => getRandomValue(upperChars));\\r\\n    const specialGroup = Array.from({ length: numberSpecial }, () => getRandomValue(specialChars));\\r\\n    const lowerGroup = Array.from({ length: numberLower }, () => getRandomValue(lowerChars));\\r\\n\\r\\n    // Combine all groups and shuffle the order\\r\\n    const password = randomizeCharSequence([...numericGroup, ...upperGroup, ...specialGroup, ...lowerGroup]);\\r\\n\\r\\n    return password.join('');\\r\\n}\\r\\n\\r\\ngeneratePassword();\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "marriedname",
-      "Description": "This field cannot be null. If you don't want to populate this property, remove it from the entire connector.",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Field",
-          "Value": "\"Person.Name.FamilyNamePartner\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "username",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Update"
-          ],
-          "MappingMode": "Complex",
-          "Value": "\"// generateUserPrincipalNameOption1.js [https://github.com/Tools4everBV/HelloID-Lib-Prov-HelperFunctions/blob/master/Javascript/Target/UserPrincipalName/Scripts/generateUserPrincipalNameOption1.js]\\r\\n//\\r\\n// Mapping logic to generate the UserPrincipalName according to the following convention.\\r\\n// First choice\\t        B\\tjanine.vandenboele@domain.local\\r\\n// \\t                    BP\\tjanine.vandenboele@domain.local\\r\\n// \\t                    P\\tjanine.vandenboele@domain.local\\r\\n// \\t                    PB  janine.vandenboele@domain.local\\r\\n// If in use   \\t        B\\tj.vandenboele@domain.local\\r\\n// \\t                    BP\\tj.vandenboele@domain.local\\r\\n// \\t                    P\\tj.vandenboele@domain.local\\r\\n// \\t                    PB  j.vandenboele@domain.local\\r\\n// If also in use   \\tB\\tjanine.vandenboele2@domain.local\\r\\n// \\t                    BP\\tjanine.vandenboele2@domain.local\\r\\n// \\t                    P\\tjanine.vandenboele2@domain.local\\r\\n// \\t                    PB  janine.vandenboele2@domain.local\\r\\n// etc.\\r\\nfunction generateUserPrincipalName() {\\r\\n    let nickName = Person.Name.NickName;\\r\\n    let middleName = Person.Name.FamilyNamePrefix;\\r\\n    let lastName = Person.Name.FamilyName;\\r\\n    let convention = Person.Name.Convention;\\r\\n\\r\\n    let mailNickName = '';\\r\\n    if (Iteration === 0) {\\r\\n        mailNickName = nickName + '.';\\r\\n    } else if (Iteration === 1) {\\r\\n        mailNickName = nickName.substring(0, 1) + '.';\\r\\n    } else {\\r\\n        mailNickName = nickName + '.';\\r\\n    }\\r\\n\\r\\n    switch (convention) {\\r\\n        case \\\"P\\\":\\r\\n        case \\\"PB\\\":\\r\\n        case \\\"B\\\":\\r\\n        case \\\"BP\\\":\\r\\n        default:\\r\\n            if (typeof middleName !== 'undefined' && middleName) { mailNickName = mailNickName + middleName.replace(/ /g, '') }\\r\\n            mailNickName = mailNickName + lastName;\\r\\n            break;\\r\\n    }\\r\\n    // Trim spaces at start and end\\r\\n    mailNickName = mailNickName.trim();\\r\\n\\r\\n    // Convert to lower case\\r\\n    mailNickName = mailNickName.toLowerCase();\\r\\n\\r\\n    // Remove diacritical chars\\r\\n    mailNickName = deleteDiacriticalMarks(mailNickName);\\r\\n\\r\\n    // Remove blank chars and \\\"'\\\"\\r\\n    mailNickName = mailNickName.replace(/[^0-9a-zA-Z.\\\\-_]/g, '');\\r\\n\\r\\n    // Shorten string to maxAttributeLength minus iteration length\\r\\n    let suffix = ''\\r\\n    let iterationToUse = Iteration - 1 === 0 ? '' : (Iteration)\\r\\n    suffix = Iteration === 0 ? '' : (iterationToUse);\\r\\n    const domain = 'domain.local';\\r\\n    const maxAttributeLength = (256 - suffix.toString().length - domain.toString().length);\\r\\n    mailNickName = mailNickName.substring(0, maxAttributeLength);\\r\\n\\r\\n    // Use the iterator if needed\\r\\n    mailNickName = mailNickName + suffix;\\r\\n\\r\\n    return mailNickName + '@' + domain;\\r\\n}\\r\\n\\r\\ngenerateUserPrincipalName();\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
-      "Name": "dateInService",
-      "Description": "",
-      "Type": "Text",
-      "MappingActions": [
-        {
-          "MapForActions": [
-            "Create",
-            "Enable",
-            "Disable"
-          ],
-          "MappingMode": "Complex",
-          "Value": "\"function formatDateToYYYYMMDD(date) {\\r\\n    // Ensure input is a Date object\\r\\n    if (!(date instanceof Date)) {\\r\\n        return \\\"Invalid Date\\\";\\r\\n    }\\r\\n\\r\\n    // Extract year, month, and day\\r\\n    const year = date.getFullYear();\\r\\n    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed\\r\\n    const day = String(date.getDate()).padStart(2, '0');\\r\\n\\r\\n    // Concatenate and return formatted date\\r\\n    return `${year}-${month}-${day}`;\\r\\n}\\r\\n\\r\\nformatDateToYYYYMMDD(new Date());\"",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
-        }
-      ]
-    },
-    {
       "Name": "dateOfBirth",
-      "Description": "",
+      "Description": "[Required in Medicore]\nMedicore blocks update requests through the API for an employee without a date of birth, and returns the generic error code MG21. Make sure the date of birth is available in the source system and in Medicore.",
       "Type": "Text",
       "MappingActions": [
         {
@@ -326,33 +53,24 @@
       ]
     },
     {
-      "Name": "dateOutOfService",
+      "Name": "hrNumber",
       "Description": "",
       "Type": "Text",
       "MappingActions": [
         {
           "MapForActions": [
             "Create",
-            "Disable"
+            "Update"
           ],
-          "MappingMode": "Complex",
-          "Value": "\"function formatDateToYYYYMMDD(date) {\\r\\n    // Ensure input is a Date object\\r\\n    if (!(date instanceof Date)) {\\r\\n        return \\\"Invalid Date\\\";\\r\\n    }\\r\\n\\r\\n    // Extract year, month, and day\\r\\n    const year = date.getFullYear();\\r\\n    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed\\r\\n    const day = String(date.getDate()).padStart(2, '0');\\r\\n\\r\\n    // Concatenate and return formatted date\\r\\n    return `${year}-${month}-${day}`;\\r\\n}\\r\\n\\r\\nformatDateToYYYYMMDD(new Date());\"",
+          "MappingMode": "Field",
+          "Value": "\"Person.ExternalId\"",
           "UsedInNotifications": false,
-          "StoreInAccountData": false
-        },
-        {
-          "MapForActions": [
-            "Enable"
-          ],
-          "MappingMode": "None",
-          "Value": "null",
-          "UsedInNotifications": false,
-          "StoreInAccountData": false
+          "StoreInAccountData": true
         }
       ]
     },
     {
-      "Name": "abbreviation",
+      "Name": "gender",
       "Description": "",
       "Type": "Text",
       "MappingActions": [
@@ -362,7 +80,334 @@
             "Update"
           ],
           "MappingMode": "Complex",
-          "Value": "\"function formatAbbreviation(NickName) {\\r\\n    let truncated = NickName.substring(0, 6);\\r\\n    return truncated;\\r\\n}\\r\\n\\r\\nformatAbbreviation(Person.Name.NickName);\"",
+          "Value": "\"function getGender() {\\n    const gender = Person.Details.Gender;\\n\\n    switch (gender) {\\n    case 'M':\\n        return 1;\\n    case 'V':\\n        return 2;\\n    default:\\n        return 0;\\n    }\\n}\\n\\ngetGender();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": false
+        }
+      ]
+    },
+    {
+      "Name": "abbreviation",
+      "Description": "Maximum length of 6 characters (Medicore limit). Mapped to the personnel number, as this is more unique and stable than a name abbreviation. Use another unique source value when the personnel number can be longer than 6 characters.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Field",
+          "Value": "\"Person.ExternalId\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "password",
+      "Description": "[Required]\n",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"// generatePasswordOption1.js [https://github.com/Tools4everBV/HelloID-Lib-Prov-HelperFunctions/blob/master/Javascript/Target/Password/Scripts/generatePasswordOption1.js]\\r\\n//\\r\\n// Helper function to shuffle an array\\r\\nfunction randomizeCharSequence(passwordObject) {\\r\\n    for (let j, x, i = passwordObject.length; i; j = Math.floor(Math.random() * i), x = passwordObject[--i], passwordObject[i] = passwordObject[j], passwordObject[j] = x);\\r\\n    return passwordObject;\\r\\n}\\r\\n\\r\\nfunction generatePassword() {\\r\\n    // Initialize these variables for the algorithm to meet your password complexity rules\\r\\n    const passwordLength = 12;\\r\\n    const minUpper = 1;\\r\\n    const maxUpper = 3;\\r\\n    const minNumeric = 1;\\r\\n    const maxNumeric = 2;\\r\\n    const minSpecial = 1;\\r\\n    const maxSpecial = 1;\\r\\n\\r\\n    // Character sets\\r\\n    const upperChars = 'ABCDEFGHJKMNPQRSTUVWXYZ';\\r\\n    const lowerChars = 'abcdefghjkmnpqrstuvwxyz';\\r\\n    const numberChars = '23456789';\\r\\n    const specialChars = '!#$@*?';\\r\\n\\r\\n    // Do not change any code below this line !!!\\r\\n\\r\\n    // Helper function to get a random character from a set\\r\\n    const getRandomValue = (values) => values.charAt(Math.floor(Math.random() * values.length));\\r\\n\\r\\n    // Generate individual character groups\\r\\n    const numberUpper = Math.floor(Math.random() * (maxUpper - minUpper + 1)) + minUpper;\\r\\n    const numberNumeric = Math.floor(Math.random() * (maxNumeric - minNumeric + 1)) + minNumeric;\\r\\n    const numberSpecial = Math.floor(Math.random() * (maxSpecial - minSpecial + 1)) + minSpecial;\\r\\n    const numberLower = passwordLength - (numberUpper + numberNumeric + numberSpecial);\\r\\n\\r\\n    const numericGroup = Array.from({ length: numberNumeric }, () => getRandomValue(numberChars));\\r\\n    const upperGroup = Array.from({ length: numberUpper }, () => getRandomValue(upperChars));\\r\\n    const specialGroup = Array.from({ length: numberSpecial }, () => getRandomValue(specialChars));\\r\\n    const lowerGroup = Array.from({ length: numberLower }, () => getRandomValue(lowerChars));\\r\\n\\r\\n    // Combine all groups and shuffle the order\\r\\n    const password = randomizeCharSequence([...numericGroup, ...upperGroup, ...specialGroup, ...lowerGroup]);\\r\\n\\r\\n    return password.join('');\\r\\n}\\r\\n\\r\\ngeneratePassword();\"",
+          "UsedInNotifications": true,
+          "StoreInAccountData": false
+        }
+      ]
+    },
+    {
+      "Name": "isPatientBound",
+      "Description": "[Optional, but not nullable]\nMapped for Create only: the value determines rights in Medicore, so a value that is changed manually in Medicore is not reset by an update.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create"
+          ],
+          "MappingMode": "Fixed",
+          "Value": "\"false\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": false
+        }
+      ]
+    },
+    {
+      "Name": "isAttendingPhysician",
+      "Description": "[Optional, but not nullable]\nMapped for Create only: the value determines rights in Medicore, so a value that is changed manually in Medicore is not reset by an update.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create"
+          ],
+          "MappingMode": "Fixed",
+          "Value": "\"false\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": false
+        }
+      ]
+    },
+    {
+      "Name": "templateId",
+      "Description": "[Required] ID of the template on which to create the user with",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"// Example: only one template is used, so the mapping table below is commented out and a fixed templateId is returned. Use the table as an example when multiple templates are needed.\\r\\n// /**\\r\\n//  * Define the template mapping table\\r\\n//  * Each entry specifies which department and/or title combination maps to which template\\r\\n//  * - If both department and title are filled: both must match\\r\\n//  * - If only department is filled: only department must match (any title)\\r\\n//  * - If only title is filled: only title must match (any department)\\r\\n//  */\\r\\n// function getTemplateMapping() {\\r\\n//     return [\\r\\n//         {\\r\\n//             department: \\\"DESG\\\",\\r\\n//             title: \\\"MANA\\\",\\r\\n//             templateId: 1\\r\\n//         }\\r\\n//         ,{\\r\\n//             department: \\\"DESGTEAM\\\",\\r\\n//             title: \\\"MEDTES\\\",\\r\\n//             templateId: 2\\r\\n//         }\\r\\n//         // Example: Department only (any title is allowed)\\r\\n//         // ,{\\r\\n//         //     department: null,\\r\\n//         //     title: \\\"MANA\\\",\\r\\n//         //     templateId: 3\\r\\n//         // }\\r\\n//         // Example: Title only (any department is allowed)\\r\\n//         // ,{\\r\\n//         //     department: \\\"DESG\\\",\\r\\n//         //     title: null,\\r\\n//         //     templateId: 4\\r\\n//         // }\\r\\n//     ];\\r\\n// }\\r\\n\\r\\n// /**\\r\\n//  * Get Template ID based on Department and Title\\r\\n//  * Checks the person's department and title against the mapping table\\r\\n//  */\\r\\n// function getTemplateId() {\\r\\n//     const department = Person.PrimaryContract.Department.ExternalId;\\r\\n//     const title = Person.PrimaryContract.Title.ExternalId;\\r\\n    \\r\\n//     // Get the mapping table\\r\\n//     const mappings = getTemplateMapping();\\r\\n    \\r\\n//     // Find matching template\\r\\n//     for (const mapping of mappings) {\\r\\n//         // Check if both department and title are specified in mapping\\r\\n//         if (mapping.department && mapping.title) {\\r\\n//             // Both must match\\r\\n//             if (department === mapping.department && title === mapping.title) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//         // Check if only department is specified in mapping\\r\\n//         else if (mapping.department && !mapping.title) {\\r\\n//             // Only department must match\\r\\n//             if (department === mapping.department) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//         // Check if only title is specified in mapping\\r\\n//         else if (!mapping.department && mapping.title) {\\r\\n//             // Only title must match\\r\\n//             if (title === mapping.title) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//     }\\r\\n    \\r\\n//     // No match found\\r\\n//     return null;\\r\\n// }\\r\\n\\r\\nfunction getTemplateId() {\\r\\n    // Fixed identifier for the template, as currently there is only 1 template.\\r\\n    let templateId = 1;\\r\\n\\r\\n    return templateId;\\r\\n}\\r\\n\\r\\ngetTemplateId();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        },
+        {
+          "MapForActions": [
+            "Disable",
+            "Delete",
+            "Enable"
+          ],
+          "MappingMode": "None",
+          "Value": "\"\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "email",
+      "Description": "[Required]\n\nThe Person.Accounts reference (MicrosoftEntraID) is a placeholder: change it to the name of the system that holds the email address in your environment.\n\nOn delete, set value to empty string to cleanup unique values from archived employees",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"function getEmail(){\\r\\n    let email = Person.Accounts.MicrosoftEntraID.mail;\\r\\n\\r\\n    return email;\\r\\n}\\r\\n\\r\\ngetEmail();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        },
+        {
+          "MapForActions": [
+            "Delete"
+          ],
+          "MappingMode": "Fixed",
+          "Value": "\"\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "lastNamePrefix",
+      "Description": "[Required]\nFilled conditionally based on name convention (Person.Name.Convention).\nMedicore displays: [partnerName] [lastName].\nConvention B (Own): lastNamePrefix=own prefix.\nConvention PB (Partner-Own): lastNamePrefix=own prefix.\nConvention P (Partner): lastNamePrefix=partner prefix.\nConvention BP (Own-Partner): lastNamePrefix=partner prefix.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"// lastNamePrefix field mapping\\r\\n// Description: Last name prefix - filled conditionally based on name convention (Person.Name.Convention). \\r\\n// Medicore displays: [partnerName] [lastName]. \\r\\n// Convention B (Own): lastNamePrefix=own prefix.\\r\\n// Convention PB (Partner-Own): lastNamePrefix=own prefix.\\r\\n// Convention P (Partner): lastNamePrefix=partner prefix.\\r\\n// Convention BP (Own-Partner): lastNamePrefix=partner prefix.\\r\\n\\r\\nfunction getLastNamePrefix() {\\r\\n    const convention = Person.Name.Convention;\\r\\n    const ownPrefix = Person.Name.FamilyNamePrefix;\\r\\n    const partnerPrefix = Person.Name.FamilyNamePartnerPrefix;\\r\\n\\r\\n    // Convention: B/PB = own prefix, P/BP = partner prefix\\r\\n    switch(convention) {\\r\\n        case 'B':\\r\\n        case 'PB':\\r\\n            return ownPrefix || '';\\r\\n        case 'P':\\r\\n        case 'BP':\\r\\n            return partnerPrefix || '';\\r\\n        default:\\r\\n            return ownPrefix || '';\\r\\n    }\\r\\n}\\r\\n\\r\\ngetLastNamePrefix();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "partnerName",
+      "Description": "[Required]\nFilled conditionally based on name convention (Person.Name.Convention).\nMedicore displays: [partnerName] [lastName].\nConvention B (Own): partnerName=empty.\nConvention P (Partner): partnerName=empty.\nConvention BP (Own-Partner): partnerName=own name.\nConvention PB (Partner-Own): partnerName=partner name.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"// partnerName field mapping\\r\\n// Description: Partner name - filled conditionally based on name convention (Person.Name.Convention). \\r\\n// Medicore displays: [partnerName] [lastName], so partnerName is shown FIRST. \\r\\n// Convention B (Own): partnerName=empty.\\r\\n// Convention P (Partner): partnerName=empty.\\r\\n// Convention BP (Own-Partner): partnerName=own name.\\r\\n// Convention PB (Partner-Own): partnerName=partner name.\\r\\n\\r\\nfunction getPartnerName() {\\r\\n    const convention = Person.Name.Convention;\\r\\n    const ownName = Person.Name.FamilyName;\\r\\n    const partnerName = Person.Name.FamilyNamePartner;\\r\\n\\r\\n    // Convention: B/P = Single name (no partnerName field), BP = own name, PB = partner name\\r\\n    switch(convention) {\\r\\n        case 'BP':\\r\\n            // Own-Partner: partnerName=own, lastName=partner → display \\\"own partner\\\"\\r\\n            return ownName || '';\\r\\n        case 'PB':\\r\\n            // Partner-Own: partnerName=partner, lastName=own → display \\\"partner own\\\"\\r\\n            return partnerName || '';\\r\\n        default:\\r\\n            // Single name conventions: no partnerName needed\\r\\n            return '';\\r\\n    }\\r\\n}\\r\\n\\r\\ngetPartnerName();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "partnerNamePrefix",
+      "Description": "[Required]\nFilled conditionally based on name convention (Person.Name.Convention).\nMedicore displays: [partnerName] [lastName].\nConvention B (Own): partnerNamePrefix=empty.\nConvention P (Partner): partnerNamePrefix=empty.\nConvention BP (Own-Partner): partnerNamePrefix=own prefix.\nConvention PB (Partner-Own): partnerNamePrefix=partner prefix.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"// partnerNamePrefix field mapping\\r\\n// Description: Partner name prefix - filled conditionally based on name convention (Person.Name.Convention). \\r\\n// Medicore displays: [partnerName] [lastName], so partnerName is shown FIRST. \\r\\n// Convention B (Own): partnerNamePrefix=empty.\\r\\n// Convention P (Partner): partnerNamePrefix=empty.\\r\\n// Convention BP (Own-Partner): partnerNamePrefix=own prefix.\\r\\n// Convention PB (Partner-Own): partnerNamePrefix=partner prefix.\\r\\n\\r\\nfunction getPartnerNamePrefix() {\\r\\n    const convention = Person.Name.Convention;\\r\\n    const ownPrefix = Person.Name.FamilyNamePrefix;\\r\\n    const partnerPrefix = Person.Name.FamilyNamePartnerPrefix;\\r\\n\\r\\n    // Convention: B/P = Single name (no partnerName field), BP = own prefix, PB = partner prefix\\r\\n    switch(convention) {\\r\\n        case 'BP':\\r\\n            // Own-Partner: partnerName=own, lastName=partner → display \\\"own prefix partner\\\"\\r\\n            return ownPrefix || '';\\r\\n        case 'PB':\\r\\n            // Partner-Own: partnerName=partner, lastName=own → display \\\"partner prefix own\\\"\\r\\n            return partnerPrefix || '';\\r\\n        default:\\r\\n            // Single name conventions: no partnerName needed\\r\\n            return '';\\r\\n    }\\r\\n}\\r\\n\\r\\ngetPartnerNamePrefix();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "dateOutOfService",
+      "Description": "[Required]\nDate out of service - determines if employee is active in Medicore.\nMedicore has NO active/inactive status field. Employee status is determined by dateOutOfService:\n- dateOutOfService in PAST or TODAY: employee is INACTIVE/BLOCKED\n- dateOutOfService in FUTURE or NULL: employee is ACTIVE\n\nFormat: YYYY-MM-DD (e.g., 2026-06-09)\n\nMapping:\nCreate: Current date (account blocked by default)\nEnable: NULL (activates account)\nDisable: Current date (blocks account)",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Disable"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"function getdateOutOfService(date) {\\r\\n    const day = String(date.getDate()).padStart(2, '0');\\r\\n    const month = String(date.getMonth() + 1).padStart(2, '0');\\r\\n    const year = date.getFullYear();\\r\\n    return `${year}-${month}-${day}`;\\r\\n}\\r\\n\\r\\ngetdateOutOfService(new Date());\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        },
+        {
+          "MapForActions": [
+            "Enable"
+          ],
+          "MappingMode": "Fixed",
+          "Value": "\"\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "dateInService",
+      "Description": "[Required]\nDate in service - start date of the employee in Medicore.\nIndicates when the employee started working (first day of employment).\n\nFormat: YYYY-MM-DD (e.g., 2026-06-09)\n\nMapping:\nCreate: Current date (account creation date as start date)\nEnable: Current date (reactivation date, account becomes active)",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Enable"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"function getdateInService(date) {\\r\\n    const day = String(date.getDate()).padStart(2, '0');\\r\\n    const month = String(date.getMonth() + 1).padStart(2, '0');\\r\\n    const year = date.getFullYear();\\r\\n    return `${year}-${month}-${day}`;\\r\\n}\\r\\n\\r\\ngetdateInService(new Date());\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "id",
+      "Description": "[Read-only] Set within scripts",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update",
+            "Disable",
+            "Enable",
+            "Delete"
+          ],
+          "MappingMode": "None",
+          "Value": "\"\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "lastName",
+      "Description": "[Required]\nFilled conditionally based on name convention (Person.Name.Convention).\nMedicore displays: [partnerName] [lastName].\nConvention B (Own): lastName=own name.\nConvention PB (Partner-Own): lastName=own name.\nConvention P (Partner): lastName=partner name.\nConvention BP (Own-Partner): lastName=partner name.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"// lastName field mapping\\r\\n// Description: Last name - filled conditionally based on name convention (Person.Name.Convention). \\r\\n// Medicore displays: [partnerName] [lastName]. \\r\\n// Convention B (Own): lastName=own name.\\r\\n// Convention PB (Partner-Own): lastName=own name.\\r\\n// Convention P (Partner): lastName=partner name.\\r\\n// Convention BP (Own-Partner): lastName=partner name.\\r\\n\\r\\nfunction getLastName() {\\r\\n    const convention = Person.Name.Convention;\\r\\n    const ownName = Person.Name.FamilyName;\\r\\n    const partnerName = Person.Name.FamilyNamePartner;\\r\\n\\r\\n    // Convention: B/PB = own name, P/BP = partner name\\r\\n    switch(convention) {\\r\\n        case 'B':\\r\\n        case 'PB':\\r\\n            return ownName;\\r\\n        case 'P':\\r\\n        case 'BP':\\r\\n            return partnerName || ownName;\\r\\n        default:\\r\\n            return ownName;\\r\\n    }\\r\\n}\\r\\n\\r\\ngetLastName();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "firstName",
+      "Description": "On delete, prefix value with '_zz' to recognize archived employees",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Field",
+          "Value": "\"Person.Name.NickName\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        },
+        {
+          "MapForActions": [
+            "Delete"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"\\r\\nfunction getFirstName() {\\r\\n    const firstName = '_zz' + Person.Name.NickName;\\r\\n\\r\\n    return firstName;\\r\\n}\\r\\n\\r\\ngetFirstName();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "username",
+      "Description": "[Required]\nNote: Not possible to update\n\nThe Person.Accounts reference (MicrosoftEntraID) is a placeholder: change it to the name of the system that holds the username in your environment. Use a value that is unique and stable, as the API cannot update or clean up the username after it has been created. The username has no function when Medicore uses SSO (the email address is leading).\n\nOn delete, set value to empty string to cleanup unique values from archived employees",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create"
+          ],
+          "MappingMode": "Complex",
+          "Value": "\"function getUsername(){\\r\\n    let username = Person.Accounts.MicrosoftEntraID.userPrincipalName;\\r\\n\\r\\n    return username;\\r\\n}\\r\\n\\r\\ngetUsername();\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        },
+        {
+          "MapForActions": [
+            "Update"
+          ],
+          "MappingMode": "None",
+          "Value": "\"\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        },
+        {
+          "MapForActions": [
+            "Delete"
+          ],
+          "MappingMode": "Fixed",
+          "Value": "\"\"",
+          "UsedInNotifications": false,
+          "StoreInAccountData": true
+        }
+      ]
+    },
+    {
+      "Name": "agbCode",
+      "Description": "[Required]\nMust be exactly 8 characters long. Medicore rejects accounts without a valid agbCode, so it must be corrected in the source system when it is missing or incorrect.",
+      "Type": "Text",
+      "MappingActions": [
+        {
+          "MapForActions": [
+            "Create",
+            "Update"
+          ],
+          "MappingMode": "Field",
+          "Value": "\"Person.Custom.AGBcode\"",
           "UsedInNotifications": false,
           "StoreInAccountData": false
         }

@@ -1,13 +1,27 @@
-#################################################
+########################################################################
 # HelloID-Conn-Prov-Target-Medicore-Update
 # PowerShell V2
-#################################################
+######################################################
+
+# Convert templateId to int, as this is required by the API
+if ($actionContext.Data.PSObject.Properties['templateId']) {
+    $actionContext.Data.templateId = [int]$actionContext.Data.templateId
+}
+# Convert gender to int, as this is required by the API
+if ($actionContext.Data.PSObject.Properties['gender']) {
+    $actionContext.Data.gender = [int]$actionContext.Data.gender
+}
+# Convert isAttendingPhysicianto bool, as this is required by the API
+if ($actionContext.Data.PSObject.Properties['isAttendingPhysician']) {
+    $actionContext.Data.isAttendingPhysician = [System.Convert]::ToBoolean($actionContext.Data.isAttendingPhysician)
+}
+# Convert isPatientBoundto bool, as this is required by the API
+if ($actionContext.Data.PSObject.Properties['isPatientBound']) {
+    $actionContext.Data.isPatientBound = [System.Convert]::ToBoolean($actionContext.Data.isPatientBound)
+}
 
 # Enable TLS1.2
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
-
-$locationLookupField1 = { $_.Department.ExternalId } # Mandatory
-$locationLookupField2 = { $_.Title.ExternalId }      # Not mandatory
 
 #region functions
 function Get-MedicoreAuthToken {
@@ -28,7 +42,8 @@ function Get-MedicoreAuthToken {
             Body        = $grantBody
         }
         Write-Output (Invoke-RestMethod @splatToken -Verbose:$false).access_token
-    } catch {
+    }
+    catch {
         $PSCmdlet.ThrowTerminatingError($_)
     }
 }
@@ -64,7 +79,8 @@ function Resolve-MedicoreError {
             $httpErrorObj.ErrorDetails = $ErrorObject.ErrorDetails
             $httpErrorObj.FriendlyMessage = $ErrorObject.ErrorDetails
             $webResponse = $true
-        } elseif ((-not($null -eq $ErrorObject.Exception.Response) -and $ErrorObject.Exception.GetType().FullName -eq 'System.Net.WebException')) {
+        }
+        elseif ((-not($null -eq $ErrorObject.Exception.Response) -and $ErrorObject.Exception.GetType().FullName -eq 'System.Net.WebException')) {
             $streamReaderResponse = [System.IO.StreamReader]::new($ErrorObject.Exception.Response.GetResponseStream()).ReadToEnd()
             if (-not([string]::IsNullOrWhiteSpace($streamReaderResponse))) {
                 $httpErrorObj.ErrorDetails = $streamReaderResponse
@@ -79,16 +95,20 @@ function Resolve-MedicoreError {
                 if ($convertedErrorObject.meta.messages.Length -eq 1) {
                     $httpErrorObj.FriendlyMessage = $convertedErrorObject.meta.messages[0].message
 
-                } elseif ($convertedErrorObject.meta.messages.Length -gt 1) {
+                }
+                elseif ($convertedErrorObject.meta.messages.Length -gt 1) {
                     $httpErrorObj.FriendlyMessage = $convertedErrorObject.meta.messages.message -join ', '
 
-                } elseif (-not [string]::IsNullOrEmpty($convertedErrorObject.error_description)) {
+                }
+                elseif (-not [string]::IsNullOrEmpty($convertedErrorObject.error_description)) {
                     $httpErrorObj.FriendlyMessage = $convertedErrorObject.error_description
 
-                } elseif (-not [string]::IsNullOrEmpty($convertedErrorObject.message)) {
+                }
+                elseif (-not [string]::IsNullOrEmpty($convertedErrorObject.message)) {
                     $httpErrorObj.FriendlyMessage = $convertedErrorObject.message
                 }
-            } catch {
+            }
+            catch {
                 Write-Warning "Unexpected web service response, Error during Json conversion: $($_.Exception.Message)"
             }
         }
@@ -96,281 +116,214 @@ function Resolve-MedicoreError {
     }
 }
 
-function Compare-Array {
-    [OutputType([array], [array], [array])] # $Left , $Right, $common
-    param(
-        [parameter(Mandatory)]
-        [AllowNull()]
-        [string[]]$ReferenceObject,
-
-        [parameter(Mandatory)]
-        [AllowNull()]
-        [string[]]$DifferenceObject
-    )
-    if ($null -eq $DifferenceObject) {
-        $Left = $ReferenceObject
-    } elseif ($null -eq $ReferenceObject) {
-        $right = $DifferenceObject
-    } else {
-        $left = [string[]][Linq.Enumerable]::Except($ReferenceObject, $DifferenceObject)
-        $right = [string[]][Linq.Enumerable]::Except($DifferenceObject, $ReferenceObject)
-        $common = [string[]][Linq.Enumerable]::Intersect($ReferenceObject, $DifferenceObject)
-    }
-    return $Left , $Right, $common
-}
-
-function Get-MedicoreLocationIdsFromMapping {
-    [Cmdletbinding()]
-    param(
-        [parameter(Mandatory)]
-        $LookupField1,
-
-        $LookupField2,
-
-        [parameter(Mandatory)]
-        $Contracts,
-
-        $Mapping,
+function ConvertTo-FlatObject {
+    param (
+        [Parameter(Mandatory = $true)]
+        [PSCustomObject]
+        $Object,
 
         [string]
-        $ColumnName1,
-
-        [string]
-        $ColumnName2
+        $Prefix = ''
     )
-    try {
-        $list = [System.Collections.Generic.list[object]]::new()
-        foreach ($contract in $Contracts) {
-            $tableLookupValue1 = ($contract | Select-Object $LookupField1).$LookupField1
-
-            if ($null -eq $tableLookupValue1) {
-                throw "Calculation error. No results when filtering contracts in scope [$($contract.count)] on Header [$ColumnName1] Value [$LookupField1]"
-            }
-            $tableLookupValue2 = ($contract | Select-Object $LookupField2).$LookupField2
-            Write-Information "Values found in Contract [$LookupField1 | $tableLookupValue1] and [$LookupField2 | $tableLookupValue2]"
-            if ($null -ne $LookupField2) {
-                if ($null -eq $tableLookupValue2) {
-                    throw "Calculation error. No results when filtering contracts in scope [$($contract.count)] on Header [$ColumnName2] Value [$LookupField2]"
-                }
-                $result = $Mapping | Where-Object {
-                    (
-                        $_.$ColumnName1 -eq $tableLookupValue1 -and
-                        $_.$ColumnName2 -eq $tableLookupValue2 ) -or
-                    (
-                        $_.$ColumnName1 -eq $tableLookupValue1 -and
-                        [string]::IsNullOrEmpty($_.$ColumnName2 )
-                    )
-                }
-            } else {
-                $result = $Mapping | Where-Object {
-                    (
-                        $_.$ColumnName1 -eq $tableLookupValue1
-                    )
-                }
-            }
-            if ($null -eq $result) {
-                throw "Calculation error. No entry found in the CSV file for [$LookupField1]: [$tableLookupValue1] and [$LookupField2] : [$tableLookupValue2]? (Second is optional)"
-            }
-            $list.add($result)
+    $result = [ordered]@{}
+    foreach ($property in $Object.PSObject.Properties) {
+        $name = if ($Prefix) {
+            "$Prefix.$($property.Name)"
         }
-        Write-Output $list
+        else {
+            $property.Name
+        }
+        if ($null -ne $property.Value -and $property.Value.GetType().FullName -eq 'System.Management.Automation.PSCustomObject') {
+            $property.Value = $property.Value | Sort-Object
+            $flattenedSubObject = ConvertTo-FlatObject -Object $property.Value -Prefix $name
+            foreach ($subProperty in $flattenedSubObject.PSObject.Properties) {
+                # Set property name to lower case to ensure this doesn't trigger an update
+                $result[$subProperty.Name] = [string]$subProperty.Value
+            }
+        }
+        else {
+            $property.Value = $property.Value | Sort-Object
 
-    } catch {
-        $PSCmdlet.ThrowTerminatingError($PSItem)
+            $result[$name] = [string]$property.Value
+        }
     }
+    Write-Output ([PSCustomObject]$result)
 }
-#endregion
+#endregion functions
 
 try {
-    # Verify if [aRef] has a value
-    if ([string]::IsNullOrEmpty($($actionContext.References.Account))) {
-        throw 'The account reference could not be found'
-    }
-
-    Write-Information "Verifying if a Medicore account for [$($personContext.Person.DisplayName)] exists"
-
+    # Get access token
+    $actionMessage = "creating access token for Medicore API"
     $token = Get-MedicoreAuthToken
+
+    # Create headers
+    $actionMessage = "creating authorization headers with Medicore access token"
     $headers = Set-MedicoreHeader -AccessToken $token
 
-    $splatGetEmployee = @{
-        Uri     = "$($actionContext.configuration.BaseUrl)/employees/$($actionContext.References.Account)"
-        Method  = 'GET'
-        Headers = $headers
+    # Get current account
+    $actionMessage = "querying employee where hrNumber = [$($actionContext.References.Account)]"
+    $queryEmployeeSplatParams = @{
+        Uri         = "$($actionContext.Configuration.baseUrl)/employees/$($actionContext.References.Account)"
+        Method      = "GET"
+        Headers     = $headers
+        ContentType = "application/json;charset=utf-8"
+        Verbose     = $false
+        ErrorAction = "Stop"
     }
-    try {
-        $employee = Invoke-RestMethod @splatGetEmployee -Verbose:$false
-    } catch {
-        $errorObj = Resolve-MedicoreError -ErrorObject $_
-        if ($errorObj.FriendlyMessage -eq "No employee found for hrnumber ``$($actionContext.References.Account)``") {
-            $correlatedAccount = $null
-        } else {
-            throw $errorObj.FriendlyMessage
-        }
-    }
+    $correlatedAccount = (Invoke-RestMethod @queryEmployeeSplatParams).data
 
-    $correlatedAccount = $employee.data
-    $outputContext.PreviousData = $correlatedAccount
-
-    # Always compare the account against the current account in target system
-    if ($null -ne $correlatedAccount) {
-        #Preview : Note! there are no contracts in scope (InConditions) in the HelloID preview mode.
-        [array]$desiredContracts = $personContext.person.contracts | Where-Object { $_.Context.InConditions -eq $true }
-        if ($actionContext.DryRun -eq $true) {
-            [array]$desiredContracts = $personContext.Person.Contracts
-        }
-        if ($desiredContracts.length -lt 1) {
-            throw "[$($personContext.Person.DisplayName)] No Contracts in scope [InConditions] found!"
+    # Determine action
+    $actionMessage = "determining action"
+    if (($correlatedAccount | Measure-Object).count -eq 1) {
+        # Username is stored in user.name, set it to username to match the fieldmapping and to be able to compare it in the next step
+        if ($correlatedAccount.user -and $correlatedAccount.user.name) {
+            $correlatedAccount | Add-Member -MemberType NoteProperty -Name 'username' -Value $correlatedAccount.user.name -Force
         }
 
-        $auditLogsValidation = [System.Collections.Generic.List[PSCustomObject]]::new()
-
-        # Lookup Template id
-        $templateMappingTable = Import-Csv $actionContext.configuration.TemplateMappingPath
-        $template = $templateMappingTable | Where-Object { $_.HelloIdTitle -eq $actionContext.Data.TemplateTitle -and $_.HelloIdDepartment -eq $actionContext.Data.TemplateDepartment }
-        if (($template | Measure-Object).count -ne 1) {
-            $auditLogsValidation.Add([PSCustomObject]@{
-                    Message = "Template Mapping: [Calculation error. No entry found in the CSV file for Department [$($actionContext.Data.TemplateDepartment)] and Title [$($actionContext.Data.TemplateTitle)] Templates found: [$(($template | Measure-Object).count)]]"
-                    IsError = $true
-                })
+        # templateId is stored in templates.id, set it to templateId to match the fieldmapping and to be able to compare it in the next step
+        if ($correlatedAccount.templates -and $correlatedAccount.templates.id) {
+            $correlatedAccount | Add-Member -MemberType NoteProperty -Name 'templateId' -Value $correlatedAccount.templates.id -Force
         }
 
-        # Lookup Location id(s)
-        $locationMappingTable = Import-Csv $actionContext.configuration.LocationMappingPath
-        $splatGetMedicoreLocationIds = @{
-            LookupField1 = $locationLookupField1
-            LookupField2 = $locationLookupField2
-            Contracts    = $desiredContracts
-            Mapping      = $locationMappingTable
-            ColumnName1  = 'HelloIdDepartment'
-            ColumnName2  = 'HelloIdTitle'
-        }
+        # Set outputContext.PreviousData to deep copy of correlated account limited to the properties present in outputContext.Data (to support none mapping and storing the current data)
+        $outputContext.PreviousData = ($correlatedAccount | Select-Object $outputContext.Data.PSObject.Properties.Name | ConvertTo-Json -Depth 10 | ConvertFrom-Json)
 
-        try {
-            $desiredLocations = Get-MedicoreLocationIdsFromMapping @splatGetMedicoreLocationIds
-            $desiredLocationUniqueIds = [array]($desiredLocations.LocationId | Select-Object -Unique).Where({ -not [string]::IsNullOrEmpty($_) })
-            $actionContext.Data | Add-Member -MemberType NoteProperty -Name 'locations' -Value $desiredLocationUniqueIds
-        } catch {
-            $auditLogsValidation.Add([PSCustomObject]@{
-                    Message = "Locations Mapping: [$($_.Exception.Message)]"
-                    IsError = $true
-                })
-        }
-        if ($auditLogsValidation.count -gt 0) {
-            $outputContext.AuditLogs.AddRange($auditLogsValidation)
-            throw 'Validation Error'
-        }
-
-        $correlatedAccount.PSObject.Properties.Remove("TemplateDepartment")
-        $correlatedAccount.PSObject.Properties.Remove("TemplateTitle")
-
-        $splatCompareProperties = @{
-            ReferenceObject  = @($correlatedAccount.PSObject.Properties)
-            DifferenceObject = @($actionContext.Data.PSObject.Properties)
-        }
-
-        $propertiesChangedObject = Compare-Object @splatCompareProperties -PassThru | Where-Object { $_.SideIndicator -eq '=>' }
-        $propertiesChanged = @{}
-        $propertiesChangedObject | ForEach-Object { $propertiesChanged[$_.Name] = $_.Value }
-
-        # Additional compare for locations
-        $locationsArray = @()
-        if ((Compare-Object $actionContext.Data.locations $correlatedAccount.locations.id)) {
-            foreach ($location in $actionContext.Data.locations) {
-                $locationObject = [PSCustomObject]@{
-                    id = [int]$location
-                }
-                $locationsArray += $locationObject
+        # Set outputContext.Data to deep copy of correlated account, then merge with .Data (to support none mapping and storing the current data)
+        $outputContext.Data = ($correlatedAccount | Select-Object $outputContext.Data.PSObject.Properties.Name | ConvertTo-Json -Depth 10 | ConvertFrom-Json)
+        # Update/append fields from actionContext.Data into PreviousData
+        foreach ($property in $actionContext.Data.PSObject.Properties) {
+            if ($outputContext.Data.PSObject.Properties.Name -contains $property.Name) {
+                # Update existing property
+                $outputContext.Data.$($property.Name) = $property.Value
             }
-            $propertiesChanged['locations'] = $locationsArray
+            else {
+                # Append with new property
+                $outputContext.Data | Add-Member -NotePropertyName $property.Name -NotePropertyValue $property.Value -Force
+            }
         }
 
-        # Additional compare for template
-        if ((-not [string]::IsNullOrEmpty($template.TemplateId)) -and $template.TemplateId -ne $correlatedAccount.templates.id) {
-            $propertiesChanged['templateId'] = [int]$template.TemplateId
+        # Normalize correlatedAccount to have the same properties as desired data
+        # Select-Object will add null values for properties that don't exist in correlatedAccount
+        $desiredData = $actionContext.Data
+        $correlatedAccountNormalized = $correlatedAccount | Select-Object $desiredData.PSObject.Properties.Name
+        
+        # Normalize both objects to ensure null and empty string are treated as equivalent
+        # and convert values to string for type-safe comparison
+        $desiredDataNormalized = [PSCustomObject]@{}
+        $correlatedAccountNormalized2 = [PSCustomObject]@{}
+        
+        foreach ($property in $desiredData.PSObject.Properties) {
+            $desiredValue = $property.Value
+            $currentValue = $correlatedAccountNormalized.$($property.Name)
+            
+            # Normalize null and empty string to empty string for both objects
+            $normalizedDesiredValue = if ([string]::IsNullOrEmpty($desiredValue)) { "" } else { [string]$desiredValue }
+            $normalizedCurrentValue = if ([string]::IsNullOrEmpty($currentValue)) { "" } else { [string]$currentValue }
+            
+            $desiredDataNormalized | Add-Member -MemberType NoteProperty -Name $property.Name -Value $normalizedDesiredValue
+            $correlatedAccountNormalized2 | Add-Member -MemberType NoteProperty -Name $property.Name -Value $normalizedCurrentValue
         }
-
-        if ($propertiesChanged.ContainsKey("gender")) {
-            $propertiesChanged.gender = [int]$propertiesChanged.gender
+        
+        # Compare all properties using Compare-Object
+        $splatCompareProperties = @{
+            ReferenceObject  = @($correlatedAccountNormalized2.PSObject.Properties)
+            DifferenceObject = @($desiredDataNormalized.PSObject.Properties)
         }
-        if ($propertiesChanged.ContainsKey("isAttendingPhysician")) {
-            $propertiesChanged.isAttendingPhysician = [bool]$propertiesChanged.isAttendingPhysician
-        }
-        if ($propertiesChanged.ContainsKey("isPatientBound")) {
-            $propertiesChanged.isPatientBound = [bool]$propertiesChanged.isPatientBound
-        }
-
+        $propertiesChanged = Compare-Object @splatCompareProperties -PassThru | Where-Object { $_.SideIndicator -eq '=>' }
+        
         if ($propertiesChanged) {
-            $action = 'UpdateAccount'
-            $dryRunMessage = "Account property(s) required to update: $($propertiesChanged.keys -join ', ')"
-        } else {
-            $action = 'NoChanges'
-            $dryRunMessage = 'No changes will be made to the account during enforcement'
+            $action = "UpdateAccount"
         }
-    } else {
-        $action = 'NotFound'
-        $dryRunMessage = "Medicore account for: [$($personContext.Person.DisplayName)] not found. Possibly deleted."
+        else {
+            $action = "NoChanges"
+        }
     }
-
-    # Add a message and the result of each of the validations showing what will happen during enforcement
-    if ($actionContext.DryRun -eq $true) {
-        Write-Information "[DryRun] $dryRunMessage"
+    elseif (($correlatedAccount | Measure-Object).count -gt 1) {
+        throw "Multiple accounts found where $($correlationField) = [$($correlationValue)]. Please correct this so the accounts are unique."
     }
+    elseif (($correlatedAccount | Measure-Object).count -eq 0) {
+        $action = "NotFound"
+    }
+    Write-Verbose "Determined action: $($action)"
 
     # Process
-    if (-not($actionContext.DryRun -eq $true)) {
-        switch ($action) {
-            'UpdateAccount' {
-                Write-Information "Updating Medicore account with accountReference: [$($actionContext.References.Account)]"
+    switch ($action) {
+        "UpdateAccount" {
+            # Update account
+            $actionMessage = "updating account with accountReference: [$($actionContext.References.Account)]. Properties changed: $($propertiesChanged.Name -join ', ')"
 
-                $splatUpdateEmployee = @{
-                    Uri     = "$($actionContext.configuration.BaseUrl)/employees/$($actionContext.References.Account)"
-                    Method  = 'PUT'
-                    Headers = $headers
-                    Body = ([System.Text.Encoding]::UTF8.GetBytes(($propertiesChanged | ConvertTo-Json -depth 10)))
-                }
+            # Create body with only the changed properties
+            $updateAccountBody = @{}
+            $propertiesChanged | ForEach-Object { $updateAccountBody[$_.Name] = $_.Value }
 
-                $null = Invoke-RestMethod @splatUpdateEmployee -Verbose:$false
+            $updateAccountSplatParams = @{
+                Uri         = "$($actionContext.Configuration.baseUrl)/employees/$($actionContext.References.Account)"
+                Method      = 'PUT'
+                Headers     = $headers
+                Body        = ([System.Text.Encoding]::UTF8.GetBytes(($updateAccountBody | ConvertTo-Json -Depth 10)))
+                ContentType = "application/json;charset=utf-8"
+                Verbose     = $false
+                ErrorAction = "Stop"
+            }
 
-                $outputContext.Success = $true
+            if (-Not($actionContext.DryRun -eq $true)) {
+                $updateAccountResponse = Invoke-RestMethod @updateAccountSplatParams
+
                 $outputContext.AuditLogs.Add([PSCustomObject]@{
-                        Message = "Update account was successful, Account property(s) updated: [$($propertiesChanged.keys -join ',')]"
+                        Action  = "UpdateAccount"
+                        Message = "Updated account with AccountReference: [$($actionContext.References.Account)]. Properties changed: $($propertiesChanged.Name -join ', ')"
                         IsError = $false
                     })
-                break
             }
-
-            'NoChanges' {
-                Write-Information "No changes to Medicore account with accountReference: [$($actionContext.References.Account)]"
-
-                $outputContext.Success = $true
-                $outputContext.AuditLogs.Add([PSCustomObject]@{
-                        Message = 'No changes will be made to the account during enforcement'
-                        IsError = $false
-                    })
-                break
+            else {
+                Write-Information "[DryRun] Would update account with AccountReference: [$($actionContext.References.Account)]. Properties changed: $($propertiesChanged.Name -join ', ')"
             }
+            break
+        }
 
-            'NotFound' {
-                $outputContext.Success = $false
-                $outputContext.AuditLogs.Add([PSCustomObject]@{
-                        Message = "Medicore account with accountReference: [$($actionContext.References.Account)] could not be found, possibly indicating that it could be deleted, or the account is not correlated"
-                        IsError = $true
-                    })
-                break
-            }
+        "NoChanges" {
+            $actionMessage = "skipping updating account with accountReference: [$($actionContext.References.Account)] (no changes)"
+            $outputContext.AuditLogs.Add([PSCustomObject]@{
+                    Message = "Skipped updating account with AccountReference [$($actionContext.References.Account)]. Reason: No changes."
+                    IsError = $false
+                })
+            break
+        }
+
+        "MultipleFound" {
+            $actionMessage = "updating account with accountReference: [$($actionContext.References.Account)] (multiple found)"
+            # Throw terminal error
+            throw "Multiple accounts found with hrNumber: [$($actionContext.References.Account)]. Please correct this so the accounts are unique."
+            break
+        }
+
+        "NotFound" {
+            $actionMessage = "updating account with accountReference: [$($actionContext.References.Account)] (not found)"
+            # Throw terminal error
+            throw "No account found with hrNumber: [$($actionContext.References.Account)]."
+            break
         }
     }
-} catch {
+
+    $outputContext.Success = $true
+}
+catch {
     $outputContext.success = $false
     $ex = $PSItem
-
-    if (-not $ex.Exception.message -eq 'Validation Error') {
+    if ($($ex.Exception.GetType().FullName -eq "Microsoft.PowerShell.Commands.HttpResponseException") -or
+        $($ex.Exception.GetType().FullName -eq "System.Net.WebException")) {
         $errorObj = Resolve-MedicoreError -ErrorObject $ex
-        Write-Warning "Error at Line '$($errorObj.ScriptLineNumber)': $($errorObj.Line). Error: $($errorObj.ErrorDetails)"
+        $warningMessage = "Error at Line '$($errorObj.ScriptLineNumber)': $($errorObj.Line). Error: $($errorObj.ErrorDetails)"
+        $errorMessage = "Error $($actionMessage). Error: $($errorObj.FriendlyMessage)"
+    }
+    else {
+        $warningMessage = "Error at Line '$($ex.InvocationInfo.ScriptLineNumber)': $($ex.InvocationInfo.Line). Error: $($ex.Exception.Message)"
+        $errorMessage = "Error $($actionMessage). Error: $($ex.Exception.Message)"
+    }
+    Write-Warning $warningMessage
 
-        $outputContext.AuditLogs.Add([PSCustomObject]@{
-            Message = "Could not up[date Medicore account. Error: $($errorObj.FriendlyMessage)"
+    $outputContext.AuditLogs.Add([PSCustomObject]@{
+            Message = $errorMessage
             IsError = $true
         })
-    }
 }
