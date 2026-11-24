@@ -125,6 +125,11 @@ try {
     $importedAccounts = (Invoke-RestMethod @splatImportAccountParams).data
     Write-Information "Queried accounts. Result count: $(($importedAccounts | Measure-Object).Count)"
 
+    # Filter out accounts without hrNumber, as accounts can only be managed (retrieved and updated) by hrNumber
+    $actionMessage = "filtering out accounts without hrNumber"
+    $importedAccounts = $importedAccounts | Where-Object { -not [string]::IsNullOrEmpty($_.hrNumber) }
+    Write-Information "Filtered out accounts without hrNumber. Result count: $(($importedAccounts | Measure-Object).Count)"
+
     # Filter out 'archived' accounts, recognized by their name ending with _zz
     $actionMessage = "filtering out archived accounts, by filtering outnames ending with '_zz'"
     $importedAccounts = $importedAccounts | Where-Object { -not $_.name.EndsWith('_zz') }
