@@ -23,7 +23,7 @@ All notable changes to this project will be documented in this file. The format 
 - Account import now excludes accounts without `hrNumber`, as accounts can only be managed by `hrNumber`
 - The filter for archived accounts (`_zz`) in the account and permission imports is optional and disabled by default, so archived accounts can be correlated during the initial implementation. Enable it after go-live when Governance Reconciliation is used, so deleted accounts no longer return in reconciliation reports (see README)
 - Field mapping uses a `MicrosoftEntraID` placeholder instead of a customer-specific `Person.Accounts` GUID for `email` and `username`, and the `agbCode`, `dateOfBirth`, `email` and `username` descriptions document their requirements
-- README documents the `hrNumber` requirement and cleanup, the username behavior with SSO, error code MG21 (missing date of birth), the API concurrency limit and the delete behavior for `username`
+- README documents the `hrNumber` requirement and cleanup, the username behavior with SSO, error code MG21 (missing date of birth), the API concurrency requirement (concurrent actions must be 1) and the delete behavior for `username`
 - Updated README documentation with clearer sections and better organization
 - Enhanced type conversion comments for better code readability
 - Improved update comparison logic in update.ps1, enable.ps1, disable.ps1, and delete.ps1 to normalize null and empty string values, preventing false change detections

@@ -92,6 +92,7 @@ The client must request API access from Medicore. Medicore will provide the foll
 **Technical Requirements:**
 - OAuth2 password grant flow support
 - API version 1 endpoints (v2 endpoints are not functional)
+- **Concurrent actions of the target system in HelloID must be set to 1.** The Medicore API accepts only one concurrent action. HelloID runs actions in parallel by default, so with a higher setting requests overlap and exceed this limit. See [API concurrency](#api-concurrency).
 
 ### Connection settings
 
@@ -226,7 +227,7 @@ MG21 is a generic Medicore error code for an unexpected error, comparable to an 
 
 ### API concurrency
 
-The Medicore API handles one concurrent action at a time (observed on the acceptance environment). Set the concurrent actions of the target system in HelloID to 1 and expect large bulk runs to take a while. Confirm the limit for the production environment with Medicore.
+The Medicore API has a concurrent action limit of 1: it handles one action at a time. HelloID runs multiple actions in parallel by default, which would exceed this limit, so the concurrent actions setting of the target system in HelloID **must be 1**. As a result actions are processed one after another and large bulk runs (for example the first enforcement or an import) take a while.
 
 ### Location permissions
 
