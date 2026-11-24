@@ -209,6 +209,9 @@ This approach allows archived employees to be recognized in the system while rel
 > Archived accounts (with `_zz` prefix in firstName) are **not** filtered out of the account and permission imports by default, so they can be correlated and put under management during the initial implementation. After go-live, when Governance Reconciliation is used, enable the optional archived account filter. See [Archived accounts](#archived-accounts).
 
 > [!WARNING]
+> The delete action does not change `dateOutOfService`. An archived account stays active in Medicore when it was not disabled first, so the disable must run before the delete (for example in the Business Rule).
+
+> [!WARNING]
 > Because delete is implemented as an update operation, the account remains in Medicore but with modified field values. This is not a true deletion.
 
 ### Username
