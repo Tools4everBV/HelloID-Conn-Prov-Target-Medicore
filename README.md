@@ -161,30 +161,29 @@ These conversions are required by the Medicore API to accept the data correctly.
 
 ### Name field logic
 
-Medicore uses four separate name fields to support full name display:
+Medicore has no field for name usage (the HelloID name convention). The name of an employee is determined by the combination of four fields:
 
-- **lastName** + **lastNamePrefix**: The surname displayed in the system
-- **partnerName** + **partnerNamePrefix**: The partner's name displayed before lastName
+- **lastName** + **lastNamePrefix**: the surname with prefix (tussenvoegsel), for example "van den Boele"
+- **partnerName** + **partnerNamePrefix**: the partner name with prefix, for example "de Vries"
 
 **Display logic:**  
-The Medicore UI always displays names as: `[partnerName] [lastName]`
+The Medicore UI always displays names as: `[partnerNamePrefix] [partnerName] [lastNamePrefix] [lastName]`
 
-When a `partnerName` is provided, it will **always be displayed first**, followed by the `lastName`.
+When `partnerName` is filled, it is **always displayed first**, followed by the surname. The four fields must therefore be filled conditionally, based on the name convention of the person (`Person.Name.Convention`).
 
 **Name convention mapping:**
 
-| Convention | Meaning           | Desired display    | lastName            | partnerName         | Medicore Display       |
-|-----------|-------------------|--------------------|--------------------|---------------------|------------------------|
-| B         | Birth name        | "Jansen"           | Jansen (birth)     | *(empty)*           | "Jansen"               |
-| P         | Partner name      | "de Vries"         | de Vries (partner) | *(empty)*           | "de Vries"             |
-| BP        | Birth-Partner     | "Jansen-de Vries"  | de Vries (partner) | Jansen (birth)      | "Jansen de Vries"      |
-| PB        | Partner-Birth     | "de Vries-Jansen"  | Jansen (birth)     | de Vries (partner)  | "de Vries Jansen"      |
+| Convention | Meaning       | Desired display          | lastName (+ prefix)   | partnerName (+ prefix) | Medicore display         |
+| ---------- | ------------- | ------------------------ | --------------------- | ---------------------- | ------------------------ |
+| B          | Birth name    | "van den Boele"          | van den Boele (birth) | *(empty)*              | "van den Boele"          |
+| P          | Partner name  | "de Vries"               | de Vries (partner)    | *(empty)*              | "de Vries"               |
+| BP         | Birth-Partner | "van den Boele-de Vries" | de Vries (partner)    | van den Boele (birth)  | "van den Boele de Vries" |
+| PB         | Partner-Birth | "de Vries-van den Boele" | van den Boele (birth) | de Vries (partner)     | "de Vries van den Boele" |
 
 **Key points:**
-- For conventions **B** and **P**: Leave `partnerName` and `partnerNamePrefix` empty
-- For conventions **BP** and **PB**: Swap the birth and partner names between `lastName` and `partnerName` to achieve the correct display order
-- The prefix (tussenvoegsel) always follows its corresponding surname
-
+- For conventions **B** and **P**: leave `partnerName` and `partnerNamePrefix` empty, as only one name is displayed.
+- For conventions **BP** and **PB**: the birth and partner names are swapped between `lastName` and `partnerName`, so the display order is correct.
+- Each prefix belongs to its own name: `lastNamePrefix` to `lastName`, `partnerNamePrefix` to `partnerName`.
 ### Update comparison logic
 
 The update, enable, disable, and delete scripts use a normalized comparison approach to detect actual changes:
