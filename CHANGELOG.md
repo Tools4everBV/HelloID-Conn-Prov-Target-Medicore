@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
-## [2.0.0] - 2026-08-05
+## [2.0.0] - 2026-11-24
 
 ### Added
 
@@ -20,7 +20,10 @@ All notable changes to this project will be documented in this file. The format 
 - **BREAKING**: Removed `Get-MedicoreLocationIdsFromMapping` function and CSV-based template/location lookups
 - **BREAKING**: Location functionality moved from lifecycle scripts to dedicated permissions subfolder
 - Delete action now performs soft-delete (updates firstName with `_zz` prefix, clears email/username) instead of hard delete
-- Import actions now exclude archived accounts (firstName ending with `_zz`) from both account and permission imports
+- Account import now excludes accounts without `hrNumber`, as accounts can only be managed by `hrNumber`
+- The filter for archived accounts (`_zz`) in the account and permission imports is optional and disabled by default, so archived accounts can be correlated during the initial implementation. Enable it after go-live when Governance Reconciliation is used, so deleted accounts no longer return in reconciliation reports (see README)
+- Field mapping uses a `MicrosoftEntraID` placeholder instead of a customer-specific `Person.Accounts` GUID for `email` and `username`, and the `agbCode`, `dateOfBirth`, `email` and `username` descriptions document their requirements
+- README documents the `hrNumber` requirement and cleanup, the username behavior with SSO, error code MG21 (missing date of birth), the API concurrency limit and the delete behavior for `username`
 - Updated README documentation with clearer sections and better organization
 - Enhanced type conversion comments for better code readability
 - Improved update comparison logic in update.ps1, enable.ps1, disable.ps1, and delete.ps1 to normalize null and empty string values, preventing false change detections
@@ -28,11 +31,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ### Fixed
 
+- Correlation audit log in create.ps1 shows the email of the correlated account instead of the empty username, and the employee uri no longer contains a redundant sub-expression
 - Boolean conversion for `isAttendingPhysician` and `isPatientBound` fields now correctly parses string "true"/"false" values using `[System.Convert]::ToBoolean()` instead of `[bool]` cast (which incorrectly converted all non-empty strings to `$true`)
 - Corrected field update limitations documentation: only `username` field cannot be updated (API limitation), all other fields including `dateOfBirth`, `dateInService`, and `templateId` can be updated
 
 ### Removed
 
+- Commented-out code from enable.ps1, update.ps1, disable.ps1 and delete.ps1
 - CSV mapping files from Assets folder (LocationMapping.csv, TemplateMapping.csv)
 - `Get-MedicoreLocationIdsFromMapping` function
 - CSV import logic from create.ps1 and update.ps1

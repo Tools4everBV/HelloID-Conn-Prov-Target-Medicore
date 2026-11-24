@@ -25,6 +25,9 @@
     - [Name field logic](#name-field-logic)
     - [Update comparison logic](#update-comparison-logic)
     - [Delete behavior](#delete-behavior)
+    - [Username](#username)
+    - [Error code MG21](#error-code-mg21)
+    - [API concurrency](#api-concurrency)
     - [Location permissions](#location-permissions)
     - [Import limitations](#import-limitations)
     - [API version](#api-version)
@@ -48,8 +51,8 @@ The following features are available:
 | Account Lifecycle                     | ✅         | Create, Update, Enable, Disable. Delete is a soft-delete (updates fields instead of removing account). [Read more](#type-conversions)         |
 | Permissions                           | ✅         | Locations managed via clinics endpoint. [Read more](#location-permissions)                                                                    |
 | Resources                             | ❌         | Not applicable                                                                                                                                |
-| Entitlement Import: Accounts          | ✅⚠️        | Limited fields available. No enabled status (hardcoded to false). Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations) |
-| Entitlement Import: Permissions       | ✅⚠️        | Requires individual calls per employee. Archived accounts (`_zz` prefix) excluded. [Read more](#import-limitations)                           |
+| Entitlement Import: Accounts          | ✅⚠️        | Limited fields available. No enabled status (hardcoded to false). Accounts without `hrNumber` excluded. Archived accounts (`_zz`) optionally excluded. [Read more](#import-limitations) |
+| Entitlement Import: Permissions       | ✅⚠️        | Requires individual calls per employee. Accounts without `hrNumber` excluded. Archived accounts (`_zz`) optionally excluded. [Read more](#import-limitations)                           |
 | Governance Reconciliation Resolutions | ✅⚠️        | Delete and Disable actions supported. [Read more](#governance-reconciliation-resolutions)                                                     |
 
 ## Getting started
@@ -77,10 +80,13 @@ The client must request API access from Medicore. Medicore will provide the foll
 - **TokenUrl** - OAuth2 token endpoint URL for obtaining access tokens
 
 **Medicore System Requirements:**
-- All Medicore accounts must have a populated `hrNumber` field. This field is **required** and is the only supported correlation field. **The connector cannot be implemented without this field.** If hrNumber is not (correctly) populated in Medicore, it must be (correctly) populated before implementation can proceed.
+- All Medicore accounts that must be managed by HelloID need a populated `hrNumber` field (shown as HRM reference in Medicore). This field is **required** and is the only supported correlation field. **The connector cannot be implemented without this field.** If hrNumber is not (correctly) populated in Medicore, it must be (correctly) populated before implementation can proceed.
+  - Accounts without `hrNumber` cannot be correlated or managed. They are excluded from the account and permission imports, and a create for a matching person would try to create a new account instead of correlating to the existing one.
+  - `hrNumber` is not editable in the Medicore UI. Ask Medicore support to fill it for the existing accounts with a one-time load through the API, for example from the external id field or based on the email address.
+- Every employee needs a date of birth in Medicore, otherwise the API blocks updates with the generic error [MG21](#error-code-mg21).
 
 **Source System Requirements:**
-- The `agbCode` field must be available from the source system (e.g., HR system). This field is **required** for account management in Medicore. **The connector cannot be implemented without this field.** If agbCode is not available from the source system, it must be made available before implementation can proceed.
+- The `agbCode` field must be available from the source system (e.g., HR system) and must be exactly 8 characters long. This field is **required** for account management in Medicore. **The connector cannot be implemented without this field.** If agbCode is not available from the source system, it must be made available before implementation can proceed.
 - The `templateId` must be determined for each account. This is a **required** field when creating accounts in Medicore. Organizations with a single template can use a fixed value in the field mapping. Organizations with multiple templates must establish logic to determine which persons receive which template ID.
 
 **Technical Requirements:**
@@ -120,6 +126,9 @@ The correlation configuration is used to specify which properties will be used t
 
 > [!IMPORTANT]
 > Correlation **must** use the `hrNumber` field. This is the only supported correlation field because the Medicore API is built around hrNumber - all GET operations for individual employees use `/employees/{hrnumber}`. Correlation on any other field is not supported by the API.
+
+> [!NOTE]
+> Medicore accounts without `hrNumber` are not correlated and not managed. Fill the `hrNumber` for these accounts first (see [Requirements](#requirements)). The `username` and `email` cannot be used for correlation: the GET employee endpoint only accepts the `hrNumber`, and the list endpoint does not return the `username`.
 
 > [!TIP]
 > For more information on correlation, please refer to our correlation [documentation](https://docs.helloid.com/en/provisioning/target-systems/powershell-v2-target-systems/correlation.html) pages.
@@ -193,15 +202,31 @@ The delete action does **not** perform a hard delete. Instead, it performs a sof
 
 - `firstName` - prefixed with `_zz` to mark archived employees (e.g., `_zzJohn`)
 - `email` - set to empty string to free up unique values for reuse
-- `username` - set to empty string to free up unique values for reuse
+- `username` - set to empty string, but the Medicore API ignores this (see [Username](#username))
 
-This approach allows archived employees to be recognized in the system while releasing their unique identifiers (email and username) for potential reassignment to new employees.
+This approach allows archived employees to be recognized in the system while releasing the email address for reuse. The username cannot be released through the API.
 
 > [!IMPORTANT]
-> Archived accounts (with `_zz` prefix in firstName) are automatically filtered out during both account and permission imports. This ensures deleted employees are not imported back into HelloID.
+> Archived accounts (with `_zz` prefix in firstName) are **not** filtered out of the account and permission imports by default, so they can be correlated and put under management during the initial implementation. After go-live, when Governance Reconciliation is used, enable the optional archived account filter. See [Archived accounts](#archived-accounts).
 
 > [!WARNING]
 > Because delete is implemented as an update operation, the account remains in Medicore but with modified field values. This is not a true deletion.
+
+### Username
+
+- Medicore requires a unique `username` when an account is created. When Medicore uses SSO the `username` has no function, the email address is leading for logging in.
+- The `username` can only be set on create. PUT requests to update it do not return an error but the value is not updated, so the username cannot be cleaned up when an employee leaves.
+- Map a value that is unique and stable, for example the object id of the Entra ID account. A username that can be generated again for a future employee with the same name causes a conflict when the account is created. Accounts that were created before the integration can contain a legacy username that Medicore support can clean up once.
+- The `username` is not returned by the GET all employees endpoint. It is available in the GET employee endpoint (`/employees/{hrNumber}`) as `user.name`.
+- The `email` can be updated, and is cleared by the delete action.
+
+### Error code MG21
+
+MG21 is a generic Medicore error code for an unexpected error, comparable to an HTTP 404. A known cause is an employee without a date of birth: Medicore validates this in the background and blocks changes through the API. Fill the date of birth in Medicore (and in the source system) to resolve the error.
+
+### API concurrency
+
+The Medicore API handles one concurrent action at a time (observed on the acceptance environment). Set the concurrent actions of the target system in HelloID to 1 and expect large bulk runs to take a while. Confirm the limit for the production environment with Medicore.
 
 ### Location permissions
 
@@ -215,15 +240,32 @@ The import action has significant limitations:
 **Account Import:**
 - Only the fields `id`, `name`, `hrNumber`, and `isInternalAccount` are returned by the GET all employees endpoint
 - The `username` field is **not included** in the bulk endpoint response - individual GET calls would be required
+- Accounts without `hrNumber` are excluded from the import, as accounts can only be managed by `hrNumber`
 - No enabled/disabled status is available in the import data - the `Enabled` property is hardcoded to `false` for all imported accounts
 - If more fields are needed, individual GET calls for each employee would be required
 - This approach is not recommended as it significantly increases runtime, especially with large numbers of accounts
 - Preferably, the Medicore API should be updated to include required fields in the bulk endpoint
-- Archived accounts (names ending with `_zz`) are automatically excluded from import
+- Archived accounts can optionally be excluded from the import, see [Archived accounts](#archived-accounts)
 
 **Permissions Import:**
 - All employees must be retrieved first, then individual GET calls are made for each employee to retrieve their location assignments
 - This is required because there is no endpoint to retrieve assigned locations per location
+- Accounts without `hrNumber` are excluded, as the `hrNumber` is required to retrieve the employee and is used as the account reference
+- Archived accounts can optionally be excluded from the import, see [Archived accounts](#archived-accounts)
+
+#### Archived accounts
+
+The delete action archives an account in Medicore (see [Delete behavior](#delete-behavior)). The import scripts (`import.ps1` and `permissions/locations/importPermissions.ps1`) contain a filter for archived accounts that is **commented out by default**.
+
+| Phase                                                  | Filter       | Why                                                                                                                                                                                                                       |
+| ------------------------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Initial implementation                                 | Disabled     | Archived accounts are imported, so they can be correlated and put under management.                                                                                                                                         |
+| After go-live, when Governance Reconciliation is used  | **Enabled**  | HelloID treats archived accounts as deleted. Without the filter they are imported as accounts without an owner and keep returning in every reconciliation report.                                                          |
+
+To enable the filter, remove the comment characters from the three lines below the comment `Optional: filter out 'archived' accounts` in both import scripts.
+
+> [!WARNING]
+> The filter checks the `name` returned by the GET all employees endpoint for the `_zz` marker. Verify how the `name` is composed for an archived account (the delete action prefixes the `firstName`) before enabling the filter, and adjust the check when needed.
 
 ### API version
 
@@ -256,7 +298,7 @@ The connector supports Governance Reconciliation Resolutions for **Delete** and 
 
 | Action  | Field(s) Updated                 | Values                                            |
 | ------- | -------------------------------- | ------------------------------------------------- |
-| Delete  | `firstName`, `email`, `username` | Prefix firstName with `_zz`, clear email/username |
+| Delete  | `firstName`, `email`, `username` | Prefix firstName with `_zz`, clear email/username (the API ignores the username, see [Username](#username)) |
 | Disable | `dateOutOfService`               | Set to current date (YYYY-MM-DD)                  |
 
 > [!IMPORTANT]
@@ -272,7 +314,7 @@ The following endpoints are used by the connector:
 | --------------- | ---------- | ------------------------------------ |
 | /oauth2/token   | POST       | Retrieve access token                |
 | /employees      | GET, POST  | Retrieve and create employee records |
-| /employees/{id} | GET, PATCH | Get and update specific employee     |
+| /employees/{id} | GET, PUT   | Get and update specific employee     |
 | /clinics        | GET        | Retrieve location/clinic information |
 
 ## Getting help
