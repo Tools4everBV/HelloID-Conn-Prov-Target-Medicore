@@ -137,7 +137,6 @@ function ConvertTo-FlatObject {
             $property.Name
         }
         if ($null -ne $property.Value -and $property.Value.GetType().FullName -eq 'System.Management.Automation.PSCustomObject') {
-            # if ($property.Value -is [PSCustomObject]) {
             $property.Value = $property.Value | Sort-Object
             $flattenedSubObject = ConvertTo-FlatObject -Object $property.Value -Prefix $name
             foreach ($subProperty in $flattenedSubObject.PSObject.Properties) {
