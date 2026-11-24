@@ -70,7 +70,7 @@ https://raw.githubusercontent.com/Tools4everBV/HelloID-Conn-Prov-Target-Medicore
 Before implementing this connector, ensure the following requirements are met:
 
 **API Access from Medicore:**
-The client must request API access from Medicore. Medicore will provide the following credentials and endpoints:
+The client must request API access from Medicore. The API must be made available by Medicore as **API version 1** (`/hrintegration/v1`), as the v2 endpoints are not functional. Medicore will provide the following credentials and endpoints:
 - **UserName** - OAuth2 username for password grant authentication
 - **Password** - Password for the API user
 - **client_id** - OAuth2 client ID for API authentication  
@@ -90,8 +90,6 @@ The client must request API access from Medicore. Medicore will provide the foll
 - The `templateId` must be determined for each account. This is a **required** field when creating accounts in Medicore. Organizations with a single template can use a fixed value in the field mapping. Organizations with multiple templates must establish logic to determine which persons receive which template ID.
 
 **Technical Requirements:**
-- OAuth2 password grant flow support
-- API version 1 endpoints (v2 endpoints are not functional)
 - **Concurrent actions of the target system in HelloID must be set to 1.** The Medicore API accepts only one concurrent action. HelloID runs actions in parallel by default, so with a higher setting requests overlap and exceed this limit. See [API concurrency](#api-concurrency).
 
 ### Connection settings
