@@ -130,10 +130,14 @@ try {
     $importedAccounts = $importedAccounts | Where-Object { -not [string]::IsNullOrEmpty($_.hrNumber) }
     Write-Information "Filtered out accounts without hrNumber. Result count: $(($importedAccounts | Measure-Object).Count)"
 
-    # Filter out 'archived' accounts, recognized by their name ending with _zz
-    $actionMessage = "filtering out archived accounts, by filtering outnames ending with '_zz'"
-    $importedAccounts = $importedAccounts | Where-Object { -not $_.name.EndsWith('_zz') }
-    Write-Information "Filtered out archived accounts, by filtering outnames ending with '_zz'. Result count: $(($importedAccounts | Measure-Object).Count)"
+    # Optional: filter out 'archived' accounts, recognized by '_zz' (set by the delete action). Disabled by default.
+    # - Initial implementation: keep this disabled, so archived accounts are imported and can be correlated and put under management.
+    # - After go-live, when Governance Reconciliation is used: enable this. Archived accounts are treated as deleted by HelloID, so without
+    #   this filter they keep returning as accounts without an owner in every reconciliation report.
+    # - Before enabling, verify how 'name' is composed for an archived account in the GET all employees response, as the check below must match it.
+    # $actionMessage = "filtering out archived accounts, by filtering outnames ending with '_zz'"
+    # $importedAccounts = $importedAccounts | Where-Object { -not $_.name.EndsWith('_zz') }
+    # Write-Information "Filtered out archived accounts, by filtering outnames ending with '_zz'. Result count: $(($importedAccounts | Measure-Object).Count)"
 
     # Process each account and output account entitlement objects
     $actionMessage = "processing imported accounts and outputting account entitlements to HelloID"
