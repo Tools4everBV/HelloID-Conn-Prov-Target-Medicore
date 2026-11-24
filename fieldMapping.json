@@ -323,7 +323,7 @@
     },
     {
       "Name": "lastName",
-      "Description": "[Required]\nFilled conditionally based on name convention (Person.Name.Convention).\nMedicore displays: [partnerName] [lastName].\nConvention B (Own): lastName=own name.\nConvention PB (Partner-Own): lastName=partner name.\nConvention P (Partner): lastName=partner name.\nConvention BP (Own-Partner): lastName=partner name.",
+      "Description": "[Required]\nFilled conditionally based on name convention (Person.Name.Convention).\nMedicore displays: [partnerName] [lastName].\nConvention B (Own): lastName=own name.\nConvention PB (Partner-Own): lastName=own name.\nConvention P (Partner): lastName=partner name.\nConvention BP (Own-Partner): lastName=partner name.",
       "Type": "Text",
       "MappingActions": [
         {
