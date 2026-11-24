@@ -121,13 +121,12 @@
     },
     {
       "Name": "isPatientBound",
-      "Description": "[Optional, but not nullable]",
+      "Description": "[Optional, but not nullable]\nMapped for Create only: the value determines rights in Medicore, so a value that is changed manually in Medicore is not reset by an update.",
       "Type": "Text",
       "MappingActions": [
         {
           "MapForActions": [
-            "Create",
-            "Update"
+            "Create"
           ],
           "MappingMode": "Fixed",
           "Value": "\"false\"",
@@ -138,13 +137,12 @@
     },
     {
       "Name": "isAttendingPhysician",
-      "Description": "[Optional, but not nullable]",
+      "Description": "[Optional, but not nullable]\nMapped for Create only: the value determines rights in Medicore, so a value that is changed manually in Medicore is not reset by an update.",
       "Type": "Text",
       "MappingActions": [
         {
           "MapForActions": [
-            "Create",
-            "Update"
+            "Create"
           ],
           "MappingMode": "Fixed",
           "Value": "\"false\"",

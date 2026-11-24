@@ -151,6 +151,9 @@ Due to the limitations of the field mapping, which can only return strings or an
 - `isAttendingPhysician` - converted to boolean
 - `isPatientBound` - converted to boolean
 
+> [!NOTE]
+> `isAttendingPhysician` and `isPatientBound` determine rights in Medicore and cannot be derived from HR data. They are mapped for Create only (default `false`), so values that are changed manually in Medicore are not reset by an update. Adding an Update mapping for these fields overwrites manual changes.
+
 These conversions are required by the Medicore API to accept the data correctly.
 
 > [!NOTE]
@@ -242,7 +245,8 @@ The import action has significant limitations:
 - Only the fields `id`, `name`, `hrNumber`, and `isInternalAccount` are returned by the GET all employees endpoint
 - The `username` field is **not included** in the bulk endpoint response - individual GET calls would be required
 - Accounts without `hrNumber` are excluded from the import, as accounts can only be managed by `hrNumber`
-- No enabled/disabled status is available in the import data - the `Enabled` property is hardcoded to `false` for all imported accounts
+- No enabled/disabled status is available in the import data - the `Enabled` property is hardcoded to `false` for all imported accounts. Every imported account therefore looks disabled, which makes Governance Reconciliation for the Enable action unreliable
+- The `UserName` of an imported account is set to the `hrNumber`, as the username is not available in the bulk endpoint response
 - If more fields are needed, individual GET calls for each employee would be required
 - This approach is not recommended as it significantly increases runtime, especially with large numbers of accounts
 - Preferably, the Medicore API should be updated to include required fields in the bulk endpoint
