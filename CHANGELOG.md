@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file. The format 
 - Location permission import log in permissions.ps1 showed an empty `groupGuid`, it now shows the location id
 - Description of `lastName` in the field mapping now matches the mapping for name convention PB (own name)
 - README name field logic now describes the full display order including the prefixes and that Medicore has no field for name usage
+- Documented the maximum length of 6 characters of `abbreviation` in the field mapping description and the README
 - Correlation audit log in create.ps1 shows the email of the correlated account instead of the empty username, and the employee uri no longer contains a redundant sub-expression
 - Boolean conversion for `isAttendingPhysician` and `isPatientBound` fields now correctly parses string "true"/"false" values using `[System.Convert]::ToBoolean()` instead of `[bool]` cast (which incorrectly converted all non-empty strings to `$true`)
 - Corrected field update limitations documentation: only `username` field cannot be updated (API limitation), all other fields including `dateOfBirth`, `dateInService`, and `templateId` can be updated

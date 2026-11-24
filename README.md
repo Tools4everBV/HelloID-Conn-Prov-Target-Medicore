@@ -154,7 +154,7 @@ Due to the limitations of the field mapping, which can only return strings or an
 These conversions are required by the Medicore API to accept the data correctly.
 
 > [!NOTE]
-> The `abbreviation` field is typically populated with the employee's personnel number (hrNumber) rather than a name abbreviation, as this provides a more unique and stable identifier.
+> The `abbreviation` field has a maximum length of 6 characters. It is typically populated with the employee's personnel number (hrNumber) rather than a name abbreviation, as this provides a more unique and stable identifier. If the personnel number can be longer than 6 characters, use another unique source value.
 
 > [!IMPORTANT]
 > The `agbCode` field is **required** for account management in Medicore. Without an agbCode, accounts cannot be managed. This field must be available from the source system.

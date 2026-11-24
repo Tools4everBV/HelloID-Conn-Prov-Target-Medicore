@@ -88,7 +88,7 @@
     },
     {
       "Name": "abbreviation",
-      "Description": "",
+      "Description": "Maximum length of 6 characters (Medicore limit). Mapped to the personnel number, as this is more unique and stable than a name abbreviation. Use another unique source value when the personnel number can be longer than 6 characters.",
       "Type": "Text",
       "MappingActions": [
         {
