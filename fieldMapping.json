@@ -37,7 +37,7 @@
     },
     {
       "Name": "dateOfBirth",
-      "Description": "",
+      "Description": "[Required in Medicore]\nMedicore blocks update requests through the API for an employee without a date of birth, and returns the generic error code MG21. Make sure the date of birth is available in the source system and in Medicore.",
       "Type": "Text",
       "MappingActions": [
         {
@@ -164,7 +164,7 @@
             "Update"
           ],
           "MappingMode": "Complex",
-          "Value": "\"// Custom - 2026/06/09 - RS - Outcommented as we currently only have 1 template, and the logic is not yet needed. Can be used as example for future mappings when needed.\\r\\n// /**\\r\\n//  * Define the template mapping table\\r\\n//  * Each entry specifies which department and/or title combination maps to which template\\r\\n//  * - If both department and title are filled: both must match\\r\\n//  * - If only department is filled: only department must match (any title)\\r\\n//  * - If only title is filled: only title must match (any department)\\r\\n//  */\\r\\n// function getTemplateMapping() {\\r\\n//     return [\\r\\n//         {\\r\\n//             department: \\\"DESG\\\",\\r\\n//             title: \\\"MANA\\\",\\r\\n//             templateId: 1\\r\\n//         }\\r\\n//         ,{\\r\\n//             department: \\\"DESGTEAM\\\",\\r\\n//             title: \\\"MEDTES\\\",\\r\\n//             templateId: 2\\r\\n//         }\\r\\n//         // Example: Department only (any title is allowed)\\r\\n//         // ,{\\r\\n//         //     department: null,\\r\\n//         //     title: \\\"MANA\\\",\\r\\n//         //     templateId: 3\\r\\n//         // }\\r\\n//         // Example: Title only (any department is allowed)\\r\\n//         // ,{\\r\\n//         //     department: \\\"DESG\\\",\\r\\n//         //     title: null,\\r\\n//         //     templateId: 4\\r\\n//         // }\\r\\n//     ];\\r\\n// }\\r\\n\\r\\n// /**\\r\\n//  * Get Template ID based on Department and Title\\r\\n//  * Checks the person's department and title against the mapping table\\r\\n//  */\\r\\n// function getTemplateId() {\\r\\n//     const department = Person.PrimaryContract.Department.ExternalId;\\r\\n//     const title = Person.PrimaryContract.Title.ExternalId;\\r\\n    \\r\\n//     // Get the mapping table\\r\\n//     const mappings = getTemplateMapping();\\r\\n    \\r\\n//     // Find matching template\\r\\n//     for (const mapping of mappings) {\\r\\n//         // Check if both department and title are specified in mapping\\r\\n//         if (mapping.department && mapping.title) {\\r\\n//             // Both must match\\r\\n//             if (department === mapping.department && title === mapping.title) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//         // Check if only department is specified in mapping\\r\\n//         else if (mapping.department && !mapping.title) {\\r\\n//             // Only department must match\\r\\n//             if (department === mapping.department) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//         // Check if only title is specified in mapping\\r\\n//         else if (!mapping.department && mapping.title) {\\r\\n//             // Only title must match\\r\\n//             if (title === mapping.title) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//     }\\r\\n    \\r\\n//     // No match found\\r\\n//     return null;\\r\\n// }\\r\\n\\r\\nfunction getTemplateId() {\\r\\n    // Fixed identifier for the template, as currently there is only 1 template.\\r\\n    let templateId = 1;\\r\\n\\r\\n    return templateId;\\r\\n}\\r\\n\\r\\ngetTemplateId();\"",
+          "Value": "\"// Example: only one template is used, so the mapping table below is commented out and a fixed templateId is returned. Use the table as an example when multiple templates are needed.\\r\\n// /**\\r\\n//  * Define the template mapping table\\r\\n//  * Each entry specifies which department and/or title combination maps to which template\\r\\n//  * - If both department and title are filled: both must match\\r\\n//  * - If only department is filled: only department must match (any title)\\r\\n//  * - If only title is filled: only title must match (any department)\\r\\n//  */\\r\\n// function getTemplateMapping() {\\r\\n//     return [\\r\\n//         {\\r\\n//             department: \\\"DESG\\\",\\r\\n//             title: \\\"MANA\\\",\\r\\n//             templateId: 1\\r\\n//         }\\r\\n//         ,{\\r\\n//             department: \\\"DESGTEAM\\\",\\r\\n//             title: \\\"MEDTES\\\",\\r\\n//             templateId: 2\\r\\n//         }\\r\\n//         // Example: Department only (any title is allowed)\\r\\n//         // ,{\\r\\n//         //     department: null,\\r\\n//         //     title: \\\"MANA\\\",\\r\\n//         //     templateId: 3\\r\\n//         // }\\r\\n//         // Example: Title only (any department is allowed)\\r\\n//         // ,{\\r\\n//         //     department: \\\"DESG\\\",\\r\\n//         //     title: null,\\r\\n//         //     templateId: 4\\r\\n//         // }\\r\\n//     ];\\r\\n// }\\r\\n\\r\\n// /**\\r\\n//  * Get Template ID based on Department and Title\\r\\n//  * Checks the person's department and title against the mapping table\\r\\n//  */\\r\\n// function getTemplateId() {\\r\\n//     const department = Person.PrimaryContract.Department.ExternalId;\\r\\n//     const title = Person.PrimaryContract.Title.ExternalId;\\r\\n    \\r\\n//     // Get the mapping table\\r\\n//     const mappings = getTemplateMapping();\\r\\n    \\r\\n//     // Find matching template\\r\\n//     for (const mapping of mappings) {\\r\\n//         // Check if both department and title are specified in mapping\\r\\n//         if (mapping.department && mapping.title) {\\r\\n//             // Both must match\\r\\n//             if (department === mapping.department && title === mapping.title) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//         // Check if only department is specified in mapping\\r\\n//         else if (mapping.department && !mapping.title) {\\r\\n//             // Only department must match\\r\\n//             if (department === mapping.department) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//         // Check if only title is specified in mapping\\r\\n//         else if (!mapping.department && mapping.title) {\\r\\n//             // Only title must match\\r\\n//             if (title === mapping.title) {\\r\\n//                 return mapping.templateId;\\r\\n//             }\\r\\n//         }\\r\\n//     }\\r\\n    \\r\\n//     // No match found\\r\\n//     return null;\\r\\n// }\\r\\n\\r\\nfunction getTemplateId() {\\r\\n    // Fixed identifier for the template, as currently there is only 1 template.\\r\\n    let templateId = 1;\\r\\n\\r\\n    return templateId;\\r\\n}\\r\\n\\r\\ngetTemplateId();\"",
           "UsedInNotifications": false,
           "StoreInAccountData": true
         },
@@ -183,7 +183,7 @@
     },
     {
       "Name": "email",
-      "Description": "[Required]\n\nOn delete, set value to empty string to cleanup unique values from archived employees",
+      "Description": "[Required]\n\nThe Person.Accounts reference (MicrosoftEntraID) is a placeholder: change it to the name of the system that holds the email address in your environment.\n\nOn delete, set value to empty string to cleanup unique values from archived employees",
       "Type": "Text",
       "MappingActions": [
         {
@@ -192,7 +192,7 @@
             "Update"
           ],
           "MappingMode": "Complex",
-          "Value": "\"function getEmail(){\\r\\n    let email = Person.Accounts._4fe6d27cb6ea4c01bf9701533fe2aa31.mail;\\r\\n\\r\\n    return email;\\r\\n}\\r\\n\\r\\ngetEmail();\"",
+          "Value": "\"function getEmail(){\\r\\n    let email = Person.Accounts.MicrosoftEntraID.mail;\\r\\n\\r\\n    return email;\\r\\n}\\r\\n\\r\\ngetEmail();\"",
           "UsedInNotifications": false,
           "StoreInAccountData": true
         },
@@ -366,7 +366,7 @@
     },
     {
       "Name": "username",
-      "Description": "[Required]\nNote: Not possible to update\n\nOn delete, set value to empty string to cleanup unique values from archived employees",
+      "Description": "[Required]\nNote: Not possible to update\n\nThe Person.Accounts reference (MicrosoftEntraID) is a placeholder: change it to the name of the system that holds the username in your environment. Use a value that is unique and stable, as the API cannot update or clean up the username after it has been created. The username has no function when Medicore uses SSO (the email address is leading).\n\nOn delete, set value to empty string to cleanup unique values from archived employees",
       "Type": "Text",
       "MappingActions": [
         {
@@ -374,7 +374,7 @@
             "Create"
           ],
           "MappingMode": "Complex",
-          "Value": "\"function getUsername(){\\r\\n    let username = Person.Accounts._4fe6d27cb6ea4c01bf9701533fe2aa31.userPrincipalName;\\r\\n\\r\\n    return username;\\r\\n}\\r\\n\\r\\ngetUsername();\"",
+          "Value": "\"function getUsername(){\\r\\n    let username = Person.Accounts.MicrosoftEntraID.userPrincipalName;\\r\\n\\r\\n    return username;\\r\\n}\\r\\n\\r\\ngetUsername();\"",
           "UsedInNotifications": false,
           "StoreInAccountData": true
         },
@@ -400,7 +400,7 @@
     },
     {
       "Name": "agbCode",
-      "Description": "[Required]",
+      "Description": "[Required]\nMust be exactly 8 characters long. Medicore rejects accounts without a valid agbCode, so it must be corrected in the source system when it is missing or incorrect.",
       "Type": "Text",
       "MappingActions": [
         {
