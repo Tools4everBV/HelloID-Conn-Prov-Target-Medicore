@@ -35,6 +35,7 @@ All notable changes to this project will be documented in this file. The format 
 - Description of `lastName` in the field mapping now matches the mapping for name convention PB (own name)
 - README name field logic now describes the full display order including the prefixes and that Medicore has no field for name usage
 - Documented the maximum length of 6 characters of `abbreviation` in the field mapping description and the README
+- `phoneMobile` is now mapped to `Person.Contact.Business.Phone.Mobile` instead of the fixed business phone number. Existing implementations that rely on the fixed number should keep their own mapping, as an update changes the phone number of existing accounts
 - `isAttendingPhysician` and `isPatientBound` are now mapped for Create only, so values changed manually in Medicore are no longer reset by an update
 - Correlation audit log in create.ps1 shows the email of the correlated account instead of the empty username, and the employee uri no longer contains a redundant sub-expression
 - Boolean conversion for `isAttendingPhysician` and `isPatientBound` fields now correctly parses string "true"/"false" values using `[System.Convert]::ToBoolean()` instead of `[bool]` cast (which incorrectly converted all non-empty strings to `$true`)

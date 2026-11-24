@@ -12,7 +12,7 @@
             "Update"
           ],
           "MappingMode": "Field",
-          "Value": "\"Person.Contact.Business.Phone.Fixed\"",
+          "Value": "\"Person.Contact.Business.Phone.Mobile\"",
           "UsedInNotifications": false,
           "StoreInAccountData": false
         }
