@@ -144,7 +144,7 @@ try {
         # Get current account
         $actionMessage = "querying employee where $($correlationField) = [$($correlationValue)]"
         $queryEmployeeSplatParams = @{
-            Uri         = "$($actionContext.Configuration.baseUrl)/employees/$($($correlationValue))"
+            Uri         = "$($actionContext.Configuration.baseUrl)/employees/$($correlationValue)"
             Method      = "GET"
             Headers     = $headers
             ContentType = "application/json;charset=utf-8"
@@ -226,7 +226,7 @@ try {
 
             $outputContext.AuditLogs.Add([PSCustomObject]@{
                     Action  = "CorrelateAccount" # Optionally specify a different action for this audit log
-                    Message = "Correlated to account with hrNumber [$($correlatedAccount.hrNumber)] and username [$($correlatedAccount.username)] with AccountReference [$($outputContext.AccountReference)] on field: [$($correlationField)] with value: [$($correlationValue)]"
+                    Message = "Correlated to account with hrNumber [$($correlatedAccount.hrNumber)] and email [$($correlatedAccount.email)] with AccountReference [$($outputContext.AccountReference)] on field: [$($correlationField)] with value: [$($correlationValue)]"
                     IsError = $false
                 })
             $outputContext.AccountCorrelated = $true
